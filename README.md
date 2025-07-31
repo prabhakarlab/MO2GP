@@ -1,1 +1,1 @@
-# MEDOC Project
+# MO2GP Project
