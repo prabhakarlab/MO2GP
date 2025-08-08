@@ -1,5 +1,5 @@
-from utils_contour import *
-from utils_naive import *
+from .utils_contour import *
+from .utils_naive import *
 from joblib import Parallel, delayed
 from tqdm import tqdm
 import numpy as np
