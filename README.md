@@ -26,7 +26,7 @@ pip install -e .
 
 ### **The test after installation**
 ```bash
-from shapealign import ShapeAlign  # Replace with your actual package name if different
+from shapealign import ShapeAlign  
 
 import numpy as np
 
