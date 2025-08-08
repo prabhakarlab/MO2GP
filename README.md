@@ -35,8 +35,5 @@ circle = np.array([[np.cos(t), np.sin(t)] for t in np.linspace(0, 2*np.pi, 100, 
 
 shapes = ShapeAlign([circle])
 shapes.preprocess_contours()
-shapes.get_embedding()
 
-print(shapes.shape_embedding)
-print(shapes.descriptor)
 ```
