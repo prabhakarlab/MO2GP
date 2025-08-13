@@ -155,3 +155,14 @@ plt.ylabel('UMAP2')
 plt.legend(title='', loc='center left', bbox_to_anchor=(1, 0.5), fontsize=8)
 plt.show()
 ```
+
+## Example Leaf Plots
+
+### Leaf Images
+![Sample Images](examples/leaf_results/leaf_images.png)
+
+### Leaf Contours
+![Sample Contours](examples/leaf_results/leaf_contours.png)
+
+### Leaf UMAP Visualization after MO2GP
+![UMAP Result](examples/leaf_results/leaf_UMAP.png)
