@@ -41,7 +41,7 @@ shapes.preprocess_contours()
 
 ## Running ShapeAlign in Jupyter Notebook
 
-Below is an example of how to load the pre-processed data (`contour_leaf.pkl`, `label_leaf.pkl`, `image_leaf.npy`),  
+Below is an example of how to load the pre-processed "leaf" data (`contour_leaf.pkl`, `label_leaf.pkl`, `image_leaf.npy`),  
 plot sample images and contours, run `ShapeAlign` to generate shape embeddings, and then visualize the result using UMAP.
 
 ```python
