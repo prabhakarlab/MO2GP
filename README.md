@@ -159,7 +159,7 @@ plt.show()
 ## Example Leaf Plots
 
 ### Leaf Images
-!(example/leaf_results/leaf_image.png)
+![Sample Images](example/leaf_results/leaf_image.png)
 
 ### Leaf Contours
 ![Sample Contours](example/leaf_results/leaf_contour.png)
