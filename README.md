@@ -159,10 +159,10 @@ plt.show()
 ## Example Leaf Plots
 
 ### Leaf Images
-![Sample Images](examples/leaf_results/leaf_images.png)
+!(examples/leaf_results/leaf_image.png)
 
 ### Leaf Contours
-![Sample Contours](examples/leaf_results/leaf_contours.png)
+![Sample Contours](examples/leaf_results/leaf_contour.png)
 
 ### Leaf UMAP Visualization after MO2GP
 ![UMAP Result](examples/leaf_results/leaf_UMAP.png)
