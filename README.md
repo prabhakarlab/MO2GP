@@ -166,3 +166,6 @@ plt.show()
 
 ### Leaf UMAP Visualization after MO2GP
 ![UMAP Result](example/leaf_results/leaf_UMAP.png)
+
+### Leaf UMAP Visualization after MO2GP (Contours on UMAP)
+![UMAP Contour Result](example/leaf_results/leaf_UMAP.png)
