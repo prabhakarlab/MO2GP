@@ -46,8 +46,7 @@ To demonstrate the functionalities of MO2GP, in this tutorial we use 1 simulatio
 **4. VeraFISH Healthy BMMC dataset**<br>
 
 # 1. Simulation dataset
-FIrst, we validated the shape embedding using a synthetic dataset of 2,160 simulated cells. This dataset consist of 18 distinct geometric categories derived from nine fundamental shapes—circle, ellipse, triangle, square, clover, pentagon, hexagon, boomerang, and nephroid—each generated at two aspect ratios (1 and 2). We also introduced low-frequency noise to the contours to mimic the real morphological variations found in real biological samples.
-
+First, we validated the MO2GP shape embedding using a synthetic dataset of 2,160 simulated cells. This dataset consist of 18 distinct geometric categories derived from nine fundamental shapes—circle, ellipse, triangle, square, clover, pentagon, hexagon, boomerang, and nephroid—each generated at two aspect ratios (1 and 2). We also introduced low-frequency noise to the contours to mimic the real morphological variations found in real biological samples.
 
 ### Run MO2GP analysis 
 This step is where the MO2GP takes place. MO2GP Shape embedding uses the **ShapeAlign**, which preprocess the raw contours and performs advanced shape analysis using Fourier transforms and dimensionality reduction. The **preprocess_contours** step is a method to standardize all the contours to ensure all the contours are comparable. It processes the raw contours by interpolating, smoothing, and scaling them using the provided parameters, including **num_workers**, **n_interp**, **n_smooth**, and **scale**.<br>
@@ -60,9 +59,17 @@ The method for scaling the contours to make them size-invariant. Currently only 
 • **num_workers**<br>
 The number of parallel workers to use for processing. This speeds up preprocessing when many contours are present. The default is 1; if 1 is chosen, processing is done sequentially.<br>
 
-Next, get_embedding is used to compute shape embeddings from the preprocessed contours using a Fourier-based method, which involves : 1. Converting representative contours coordinate to complex number, 2. Applying the Fast Fourier Transform to the contour coordinates breaks them into a combination of waves at different frequencies and representing the boundary as a sum of sinusoidal waves ,3. Scalling Fourier coefficients to emphasize certain frequencies and making the features more robust (a form of normalization to improve PCA results) ,4. Feature Selection (keep the most informative features) , 5. Applying PCA for dimensionality reduction. Finally, the quality of the embeddings is evaluated using a silhouette score to assess how well the features separate the shape classes.
+Next, **get_embedding** is used to compute shape embeddings from the preprocessed contours using a Fourier-based method, which involves : 
+1. Converting representative contours coordinate to complex number<br>
+2.Applying the Fast Fourier Transform to the contour coordinates breaks them into a combination of waves at different frequencies and representing the boundary as a sum of sinusoidal waves<br>
+3. Scalling Fourier coefficients to emphasize certain frequencies and making the features more robust (a form of normalization to improve PCA results)<br>
+4. Feature Selection (keep the most informative features)<br>
+5. Applying PCA for dimensionality reduction<br>
 
-In this tutorial, we set n_interp to 250 points, scale the shapes by perimeter so that all shapes have the same perimeter length, and used num_smooth = 0. However, users are able to adjust and optimize the parameters accordingly.
+Finally, the quality of the embeddings is evaluated using a silhouette score to assess how well the features separate the shape classes.
+
+In this tutorial, we set **n_interp** to 250 points, **scale** the shapes by perimeter so that all shapes have the same perimeter length, and used **num_smooth = 0**.<br>
+However, users are able to adjust and optimize the parameters accordingly.<br>
 ```python
 # Load the contour file 
 with open("User_Path\\contour_simulation_list_18groups_2160.pkl", "rb") as f:
