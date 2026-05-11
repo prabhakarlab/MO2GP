@@ -10,8 +10,10 @@ First, we need to extracts the largest external contour and generates a correspo
 
 ```python
 from PIL import Image
+from tqdm import tqdm
 import numpy as np
 import cv2
+import pickle
 
 def get_image_and_contours(img_path, size=128, threshold=128, invert_background=False):
     try:
@@ -61,13 +63,7 @@ def get_image_and_contours(img_path, size=128, threshold=128, invert_background=
         largest_contour = largest_contour.reshape(-1, 2)
     
     return img_padded, largest_contour
-```
-## Extract Contour 
-```python
-from tqdm import tqdm
-import os
-import pickle
-import numpy as np
+
 
 # Initialize data containers
 contour_input = []
