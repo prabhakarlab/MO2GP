@@ -109,6 +109,8 @@ plt.title(f'Subset of MPEG-7 Dataset UMAP 15 shapes, SI={ss:.4f}', fontweight='b
 plt.legend(handles=legend_elements,loc='center left',bbox_to_anchor=(1.02, 0.5), fontsize=15)
 plt.show()
 ```
+![MPEG7_15shape_Contour](../tutorials/MPEG_results/MPEG7_MO2GP_UMAP_15groups.png)
+
 ### Visualize the representative contour
 ```python
 from matplotlib.patches import Polygon
@@ -176,3 +178,4 @@ ax.legend(handles=legend_elements,loc='center left',bbox_to_anchor=(1.02, 0.5), 
 plt.tight_layout()
 plt.show()
 ```
+![MPEG7_15shape_Contour](../tutorials/MPEG_results/MPEG7_MO2GP_UMAP_15groups_contours.png)
