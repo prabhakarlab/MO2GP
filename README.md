@@ -39,10 +39,10 @@ shapes.preprocess_contours()
 
 ```
 To demonstrate the functionalities of MO2GP, in this tutorial we use 1 simulation dataset, 2 well known datasets, and 1 in house spatial transcriptomics data:
-1. **Simulation dataset**<br>
-2. **Swedish Leaf dataset**<br>
-3. **MPEG-7 dataset**<br>
-4. **VeraFISH Healthy BMMC dataset**<br>
+**1. Simulation dataset**<br>
+**2. Swedish Leaf dataset**<br>
+**3. MPEG-7 dataset**<br>
+**4. VeraFISH Healthy BMMC dataset**<br>
 
 [Swedish Leaf Dataset Tutorial](./data/tutorial/Swedish_Leaf_Dataset.md)<br>
 
