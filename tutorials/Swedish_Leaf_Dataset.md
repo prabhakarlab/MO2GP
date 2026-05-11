@@ -109,9 +109,15 @@ with open("User_Path\\label_leaf.pkl", "wb") as f:
 # Save the img_input NumPy array to a file using NumPy's efficient .npy format
 np.save(file="User_Path\\\image_leaf.npy", arr=img_input)
 ```
-
-Once the contours are generated, the next step loads the contour, label, and image files produced in the previous step and visualizes the processed images together with their corresponding contours.<br>
+## Load the pre-processed file and visualize the image and contour file.<br>
 ```python
+#Load Data
+with open ("User_Path\\contour_leaf.pkl", "rb") as f:
+     contour_input = pickle.load(f)
+with open("User_Path\\label_leaf.pkl", "rb") as f:
+     labels = pickle.load(f)
+labels = np.array(labels)
+
 # Visualize the processed images
 idx = np.arange(5, labels.shape[0], 75)
 fig, ax = plt.subplots(ncols=5, nrows=3, figsize=(25, 15))
@@ -136,8 +142,7 @@ plt.show()
 ![Leaf_Image](../tutorials/Swedish_Leaf_data_results/leaf_image.png)
 ![Leaf_Contour](../tutorials/Swedish_Leaf_data_results/leaf_contour.png)
 
-
-#Run MO2GP shape embedding
+## Run MO2GP shape embedding
 This step is where the MO2GP takes place. MO2GP Shape embedding uses the ShapeAlign, which preprocess the raw contours and performs advanced shape analysis using Fourier transforms and dimensionality reduction. The preprocess_contours step is a method to standardize all the contours to ensure all the contours are comparable. It processes the raw contours by interpolating, smoothing, and scaling them using the provided parameters, including num_workers, n_interp, n_smooth, and scale.
 •	n_interp 
 The number of points to interpolate for each contour, resulting in contours of uniform size. The default is 250. 
@@ -152,13 +157,6 @@ Next, get_embedding is used to compute shape embeddings from the preprocessed co
 
 In this tutorial, we set n_interp to 250 points, scale the shapes by perimeter so that all shapes have the same perimeter length, and used num_smooth = 0. However, users are able to adjust and optimize the parameters accordingly.  
 ```python
-#Load Data
-with open ("User_Path\\contour_leaf.pkl", "rb") as f:
-     contour_input = pickle.load(f)
-with open("User_Path\\label_leaf.pkl", "rb") as f:
-     labels = pickle.load(f)
-labels = np.array(labels)
-
 #MO2GP
 model_align = ShapeAlign(contours=contour_input)
 model_align.preprocess_contours(num_workers=1, n_interp=250, n_smooth=0, scale='perimeter')
