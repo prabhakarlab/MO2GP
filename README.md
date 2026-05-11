@@ -165,8 +165,3 @@ plt.show()
 More detailed tutorials on additional datasets are available here:
 
 [Swedish Leaf Dataset](./tutorials/Swedish_Leaf_Dataset.md) | [MPEG7 Dataset](./tutorials/MPEG7_Dataset.md) | [VeraFISH_Healthy_BMMC_Dataset](./tutorials/VeraFISH_Healthy_BMMC_Dataset.md) 
-
-
-
-
-
