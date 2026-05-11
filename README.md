@@ -1,5 +1,6 @@
 # MO2GP Project
-
+**Morphology O(2)-invariant General-purpose Projection** (MO2GP) is a highly discriminative, efficient and interpretable algorithm guaranteeing rotation- and reflection-invariant shape representation.
+It uses Fourier descriptors of complex-plane representations of contour position and regularity, with feature selection and dimensionality reduction for noise reduction and scalability<br>
 ## 📥 How to Install
 
 You can install **MO2GP** either directly from GitHub or by cloning the repository for development.
