@@ -1,12 +1,13 @@
-# Swedish Leaf Dataset
-To demonstrate the functionalities of MO2GP, in this tutorial we apply the pipeline on Swedish Leaf dataset from:
-Oskar J. O. Söderkvist, “Computer vision classifcation of leaves from swedish trees,” Master’s Thesis, Linkoping University, 2001.
+# 2.Swedish Leaf Dataset
+We also applied the MO2GP shape embedding pipeline to the Swedish Leaf Dataset, which consists of 15 distinct leaf species with 75 examples each, totaling 1,125 images. 
+
+Reference:
+Söderkvist, O. J. O. (2001). Computer vision classification of leaves from Swedish trees (Master's Thesis). Linköping University.
 
 ## Images Preprocessing <br>
-MO2GP takes the largest continuous contour for each object in image datasets and converted into a binary images as an input.<br>
-First,  extracts the largest external contour and the corresponding processed binary image from each sample and stores the contours, labels, and images for downstream analysis.<br>
+MO2GP utilizes the largest continuous contour from each object as the primary input. Therefore, preprocessing workflow is needed.<br>
+First, we need to extracts the largest external contour and generates a corresponding binary mask for each sample. These contours, along with their associated labels and processed images, are then stored for downstream shape embedding and analysis.<br>
 
-### Custom Function
 ```python
 from PIL import Image
 import numpy as np
@@ -60,12 +61,6 @@ def get_image_and_contours(img_path, size=128, threshold=128, invert_background=
         largest_contour = largest_contour.reshape(-1, 2)
     
     return img_padded, largest_contour
-
-def silhouette_score(dataIn, labels, metric='euclidean'):    
-    output_sample = silhouette_samples(dataIn, labels, metric=metric)
-    unique_labels = np.unique(labels)
-    group_means = np.array([output_sample[labels == label].mean(axis=0) for label in unique_labels])
-    return np.mean(group_means)
 ```
 ## Extract Contour 
 ```python
