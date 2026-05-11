@@ -38,7 +38,7 @@ shapes = ShapeAlign([circle])
 shapes.preprocess_contours()
 
 ```
-To demonstrate the functionalities of MO2GP, in this tutorial we use 1 simulation dataset, 2 well known datasets, and 1 in house spatial transcriptomics data:
+To demonstrate the functionalities of MO2GP, in this tutorial we use 1 simulation dataset, 2 well known datasets, and 1 in house spatial transcriptomics data:<br>
 **1. Simulation dataset**<br>
 **2. Swedish Leaf dataset**<br>
 **3. MPEG-7 dataset**<br>
@@ -46,7 +46,11 @@ To demonstrate the functionalities of MO2GP, in this tutorial we use 1 simulatio
 
 [Swedish Leaf Dataset Tutorial](./tutorial/Swedish_Leaf_Dataset.md)<br>
 
-[VeraFISH Dataset Tutorial](./tutorial/VeraFISH_Healthy_BMMC_Dataset.md)
+[MPEG7 Dataset Tutorial](./tutorial/MPEG7_Dataset.md)<br>
+
+[VeraFISH Dataset Tutorial](./tutorial/VeraFISH_Healthy_BMMC_Dataset.md) 
+
+
 
 
 
