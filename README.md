@@ -73,7 +73,8 @@ Next, **get_embedding** is used to compute shape embeddings from the preprocesse
 4. Feature Selection (keep the most informative features)<br>
 5. Applying PCA for dimensionality reduction<br>
 
-Finally, the quality of the shape embeddings is evaluated using a modified silhouette score where for each data point, we calculated the mean silhouette score within each shape class and then took the average of these per-shape class means.
+Finally, the quality of the shape embeddings is evaluated using a modified silhouette score where we first find the average score for each specific group, then final silhouette score
+was then determined by taking the average of these per group means.
 
 In this tutorial, we set **n_interp** to 250 points, **scale** the shapes by perimeter so that all shapes have the same perimeter length, and used **num_smooth = 0**.<br>
 
