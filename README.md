@@ -44,11 +44,11 @@ To demonstrate the functionalities of MO2GP, in this tutorial we use 1 simulatio
 **3. MPEG-7 dataset**<br>
 **4. VeraFISH Healthy BMMC dataset**<br>
 
-[Swedish Leaf Dataset Tutorial](../tutorial/Swedish_Leaf_Dataset.md)<br>
+[Swedish Leaf Dataset](./tutorials/Swedish_Leaf_Dataset.md)
 
-[MPEG7 Dataset Tutorial](../tutorial/MPEG7_Dataset.md)<br>
+[MPEG7 Dataset](./tutorials/MPEG7_Dataset.md) 
 
-[VeraFISH Dataset Tutorial](../tutorial/VeraFISH_Healthy_BMMC_Dataset.md) 
+[VeraFISH_Healthy_BMMC_Dataset](./tutorials/VeraFISH_Healthy_BMMC_Dataset.md) 
 
 
 
