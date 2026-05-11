@@ -36,7 +36,6 @@ circle = np.array([[np.cos(t), np.sin(t)] for t in np.linspace(0, 2*np.pi, 100, 
 
 shapes = ShapeAlign([circle])
 shapes.preprocess_contours()
-
 ```
 ### Example Datasets
 To demonstrate the functionalities of MO2GP, in this tutorial we utilize one simulation dataset, two widely recognized datasets, and one in-house spatial transcriptomics dataset:<br>
