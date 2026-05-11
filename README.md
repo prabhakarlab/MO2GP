@@ -38,11 +38,54 @@ shapes = ShapeAlign([circle])
 shapes.preprocess_contours()
 
 ```
+### Example Datasets
 To demonstrate the functionalities of MO2GP, in this tutorial we use 1 simulation dataset, 2 well known datasets, and 1 in house spatial transcriptomics data:<br>
 **1. Simulation dataset**<br>
 **2. Swedish Leaf dataset**<br>
 **3. MPEG-7 dataset**<br>
 **4. VeraFISH Healthy BMMC dataset**<br>
+
+# 1. Simulation dataset
+FIrst, we validated the shape embedding using a synthetic dataset of 2,160 simulated cells. This dataset consist of 18 distinct geometric categories derived from nine fundamental shapes—circle, ellipse, triangle, square, clover, pentagon, hexagon, boomerang, and nephroid—each generated at two aspect ratios (1 and 2). We also introduced low-frequency noise to the contours to mimic the real morphological variations found in real biological samples.
+
+
+### Run MO2GP analysis 
+This step is where the MO2GP takes place. MO2GP Shape embedding uses the **ShapeAlign**, which preprocess the raw contours and performs advanced shape analysis using Fourier transforms and dimensionality reduction. The **preprocess_contours** step is a method to standardize all the contours to ensure all the contours are comparable. It processes the raw contours by interpolating, smoothing, and scaling them using the provided parameters, including **num_workers**, **n_interp**, **n_smooth**, and **scale**.<br>
+• **n_interp**<br>
+The number of points to interpolate for each contour, resulting in contours of uniform size. The default is 250.<br>
+• **n_smooth**<br>
+The number of smoothing iterations to apply. The default is 0, meaning no smoothing is applied. Smoothing can be useful for some datasets, as it reduces noise and small irregularities and makes the overall shape easier to interpret.<br>
+• **scale**<br>
+The method for scaling the contours to make them size-invariant. Currently only can use perimeter or area. The default is perimeter.<br>
+• **num_workers**<br>
+The number of parallel workers to use for processing. This speeds up preprocessing when many contours are present. The default is 1; if 1 is chosen, processing is done sequentially.<br>
+
+Next, get_embedding is used to compute shape embeddings from the preprocessed contours using a Fourier-based method, which involves : 1. Converting representative contours coordinate to complex number, 2. Applying the Fast Fourier Transform to the contour coordinates breaks them into a combination of waves at different frequencies and representing the boundary as a sum of sinusoidal waves ,3. Scalling Fourier coefficients to emphasize certain frequencies and making the features more robust (a form of normalization to improve PCA results) ,4. Feature Selection (keep the most informative features) , 5. Applying PCA for dimensionality reduction. Finally, the quality of the embeddings is evaluated using a silhouette score to assess how well the features separate the shape classes.
+
+In this tutorial, we set n_interp to 250 points, scale the shapes by perimeter so that all shapes have the same perimeter length, and used num_smooth = 0. However, users are able to adjust and optimize the parameters accordingly.
+```python
+# Load the contour file 
+with open("User_Path\\contour_simulation_list_18groups_2160.pkl", "rb") as f:
+    contour_input = pickle.load(f)
+with open("User_Path\\label_simulation_list_18groups_2160.pkl","rb") as f:
+    labels = pickle.load(f)
+labels = np.array(labels)
+
+# Start shape analysis 
+model_align = ShapeAlign(contours=contour_input)
+model_align.preprocess_contours(num_workers=1, n_interp=250, n_smooth=0, scale='area')
+model_align.get_embedding(num_workers=1)
+
+shape_embedding = model_align.shape_embedding
+contours = model_align.contours
+descriptor = model_align.descriptor
+
+ss = silhouette_score(shape_embedding, labels, metric='euclidean')
+print(ss, shape_embedding.shape)
+```
+
+
+
 
 [Swedish Leaf Dataset](./tutorials/Swedish_Leaf_Dataset.md)
 
