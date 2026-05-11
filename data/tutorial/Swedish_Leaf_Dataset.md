@@ -2,9 +2,10 @@
 To demonstrate the functionalities of MO2GP, in this tutorial we apply the pipeline on Swedish Leaf dataset from:
 Oskar J. O. Söderkvist, “Computer vision classifcation of leaves from swedish trees,” Master’s Thesis, Linkoping University, 2001.
 
-#Images Preprocessing 
+##Images Preprocessing <br>
 MO2GP takes the largest continuous contour for each object in image datasets and converted into a binary images as an input.<br>
 First,  extracts the largest external contour and the corresponding processed binary image from each sample and stores the contours, labels, and images for downstream analysis.<br>
+
 ```python
 from PIL import Image
 import numpy as np
