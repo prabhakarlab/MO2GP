@@ -309,3 +309,6 @@ plt.show()
 In this tutorial, we adjusted MO2GP shape embedding parameter using the Swedish Leaf dataset. We evaluated values of **n_interp** ranging from 50 to 500, while using default parameter for other parameters, and the results are shown in the line graph. The silhouette index increased with larger **n_interp** values but reached a plateau at **n_interp** = 300. This indicates that increasing **n_interp** beyond this point does not lead to further improvement in clustering performance. Therefore, users should tune **n_interp** based on their specific dataset, as higher values do not necessarily correlate with a higher silhouette index. 
 ![n_interp_plot](../tutorials/Swedish_Leaf_data_results/n_interp_SI_plot.png)
 
+Additionally, we examined the impact of the **n_smooth** parameter by testing values ranging from 0 to 8 and evaluating the results using the Silhouette Index (SI). While we observed a slight downward trend in the SI as **n_smooth** increased, this decrease was not really significant. This indicates that for this leaf dataset, additional smoothing does not substantially improve clustering performance and may instead risk removing fine-grained shape information. Consequently, we have set the default value for **n_smooth** to 0 in this tutorial.
+
+![n_smooth_plot](../tutorials/Swedish_Leaf_data_results/SI_n_smooth_plot_leaf.png)
