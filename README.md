@@ -65,7 +65,7 @@ Next, **get_embedding** is used to compute shape embeddings from the preprocesse
 Finally, the quality of the embeddings is evaluated using a silhouette score to assess how well the features separate the shape classes.
 
 In this tutorial, we set **n_interp** to 250 points, **scale** the shapes by perimeter so that all shapes have the same perimeter length, and used **num_smooth = 0**.<br>
-However, users are able to adjust and optimize the parameters accordingly.<br>
+
 ```python
 # Load the contour file 
 with open("User_Path\\contour_simulation_list_18groups_2160.pkl", "rb") as f:
@@ -86,7 +86,75 @@ descriptor = model_align.descriptor
 ss = silhouette_score(shape_embedding, labels, metric='euclidean')
 print(ss, shape_embedding.shape)
 ```
+### Visualize the UMAP
+```python
+color_list = [
+    (0.788, 0.498, 0.498), # brown
+    (0, 0, 0),             # black
+    (1.0, 0.647, 0.823),   # hotpink
+    (0.701, 0.4, 0.701),   # purple
+    (0.4, 0.4, 1.0),       # blue
+    (0.4, 0.701, 0.4),     # green
+    (0.456, 0.632, 0.779), # steel blue
+    (1.0, 0.788, 0.4),     # orange
+    (1.0, 0.4, 0.4),       # red
+    (0.6, 0.4, 0.2),       # dark brown
+    (0.5, 0.5, 0.5),       # gray
+    (0.8, 0.8, 0.0),       # yellow
+    (0.5, 0.0, 0.5),       # dark purple
+    (0.0, 0.6, 0.6),       # teal
+    (1.0, 0.6, 0.0),       # dark orange
+    (0.489, 1.0, 0.0),     # lime green
+    (0.5, 0.0, 0.0),       # maroon
+    (0.824, 0.706, 0.549), # tan
+    (0.25, 0.88, 0.82),    # turquoise
+    (0.5, 0.5, 0.0)        # olive
+]
 
+shapes = [
+    'boomerang', 
+    'boomerang aspect', 
+    'circle', 
+    'circle aspect', 
+    'clover', 
+    'clover aspect', 
+    'hexagon', 
+    'hexagon aspect', 
+    'nephroid', 
+    'nephroid aspect', 
+    'pentagon', 
+    'pentagon aspect', 
+    'square', 
+    'square aspect', 
+    'star', 
+    'star aspect', 
+    'triangle', 
+    'triangle aspect'
+]
+
+shape_color_dict = dict(zip(shapes, color_list))
+shape_color_dict
+
+fit = umap.UMAP(n_neighbors=50, min_dist=0.2, random_state=18)
+
+embedding = fit.fit_transform(shape_embedding)
+
+plt.figure(figsize=(12,8))
+for shape in np.unique(labels):
+    plt.scatter(
+        embedding[labels == shape, 0],
+        embedding[labels == shape, 1],
+        s=5, c=[shape_color_dict[shape]],
+        label=shape
+    )
+plt.axis('equal')
+plt.xlabel('UMAP1', fontsize=14)
+plt.ylabel('UMAP2', fontsize=14)
+plt.tick_params(axis='both', which='major', labelsize=12)
+plt.legend(title='Shapes', loc='center left', bbox_to_anchor=(1, 0.5), fontsize=8, title_fontsize=14)
+plt.title(f'MO2GP Simulation Data, SI={ss:.4f}',fontsize=16)
+plt.show()
+```
 
 
 
