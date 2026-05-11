@@ -57,7 +57,7 @@ with open("User_Path\\label_simulation_list_18groups_2160.pkl","rb") as f:
     labels = pickle.load(f)
 labels = np.array(labels)
 ```
-![Simulated_data_Contour](../tutorials/Simulation_results/simulation_ist_18groups_2160_contours.png)
+![Simulated_data_Contour](./tutorials/Simulation_results/simulation_ist_18groups_2160_contours.png)
 
 ### Run MO2GP analysis 
 This step is where the MO2GP takes place. MO2GP Shape embedding uses the **ShapeAlign**, which preprocess the raw contours and performs advanced shape analysis using Fourier transforms and dimensionality reduction. The **preprocess_contours** step is a method to standardize all the contours to ensure all the contours are comparable. It processes the raw contours by interpolating, smoothing, and scaling them using the provided parameters, including **num_workers**, **n_interp**, **n_smooth**, and **scale**.<br>
@@ -160,7 +160,7 @@ plt.legend(title='Shapes', loc='center left', bbox_to_anchor=(1, 0.5), fontsize=
 plt.title(f'MO2GP Simulation Data, SI={ss:.4f}',fontsize=16)
 plt.show()
 ```
-![Simulated_data_Contour](../tutorials/Simulation_results/Simulation_data_UMAP.png)
+![Simulated_data_Contour](./tutorials/Simulation_results/Simulation_data_UMAP.png)
 
 More detailed tutorials on additional datasets are available here:
 
