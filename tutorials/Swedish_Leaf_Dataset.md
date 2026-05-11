@@ -1,7 +1,7 @@
 # 2.Swedish Leaf Dataset
-We also applied the MO2GP shape embedding pipeline to the Swedish Leaf Dataset, which consists of 15 distinct leaf species with 75 examples each, totaling 1,125 images. 
+We also applied the MO2GP shape embedding pipeline to the Swedish Leaf Dataset, which consists of 15 distinct leaf species with 75 examples each, totaling 1,125 images. <br>
 
-Reference:
+Reference:<br>
 Söderkvist, O. J. O. (2001). Computer vision classification of leaves from Swedish trees (Master's Thesis). Linköping University.
 
 ## Images Preprocessing <br>
