@@ -50,14 +50,10 @@ First, we validated the MO2GP shape embedding using a synthetic dataset of 2,160
 
 ### Run MO2GP analysis 
 This step is where the MO2GP takes place. MO2GP Shape embedding uses the **ShapeAlign**, which preprocess the raw contours and performs advanced shape analysis using Fourier transforms and dimensionality reduction. The **preprocess_contours** step is a method to standardize all the contours to ensure all the contours are comparable. It processes the raw contours by interpolating, smoothing, and scaling them using the provided parameters, including **num_workers**, **n_interp**, **n_smooth**, and **scale**.<br>
-• **n_interp**<br>
-The number of points to interpolate for each contour, resulting in contours of uniform size. The default is 250.<br>
-• **n_smooth**<br>
-The number of smoothing iterations to apply. The default is 0, meaning no smoothing is applied. Smoothing can be useful for some datasets, as it reduces noise and small irregularities and makes the overall shape easier to interpret.<br>
-• **scale**<br>
-The method for scaling the contours to make them size-invariant. Currently only can use perimeter or area. The default is perimeter.<br>
-• **num_workers**<br>
-The number of parallel workers to use for processing. This speeds up preprocessing when many contours are present. The default is 1; if 1 is chosen, processing is done sequentially.<br>
+• **n_interp** :The number of points to interpolate for each contour, resulting in contours of uniform size. The default is 250.<br>
+• **n_smooth** :The number of smoothing iterations to apply. The default is 0, meaning no smoothing is applied. Smoothing can be useful for some datasets, as it reduces noise and small irregularities and makes the overall shape easier to interpret.<br>
+• **scale**    :The method for scaling the contours to make them size-invariant. Currently only can use perimeter or area. The default is perimeter.<br>
+• **num_workers**:The number of parallel workers to use for processing. This speeds up preprocessing when many contours are present. The default is 1; if 1 is chosen, processing is done sequentially.<br>
 
 Next, **get_embedding** is used to compute shape embeddings from the preprocessed contours using a Fourier-based method, which involves : 
 1. Converting representative contours coordinate to complex number<br>
