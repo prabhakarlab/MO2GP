@@ -159,6 +159,7 @@ ax.set_ylabel('UMAP 2', fontsize=25)
 plt.tight_layout()
 plt.show()
 ```
+![Healthy_BMMC_UMAP_contour](../tutorials/VeraFISH_Healthy_BMMC_results/UMAP_BMMC_monocytes_contour.png)
 # Custom function to calculate the Enrichment (Ratio of ODD)
 ```python
 from collections import Counter
@@ -328,6 +329,8 @@ for i, ct in enumerate(cell_types):
 plt.tight_layout()
 plt.show()
 ```
+![Celltype_Enrichment_Plot](../tutorials/VeraFISH_Healthy_BMMC_results/Celltype_shape_enrichment_plot.png)
+
 ```python
 import statsmodels.api as sm
 import statsmodels.formula.api as smf
@@ -462,7 +465,7 @@ for (row, col), cell in table.get_celld().items():
 table.scale(1.5, 2.5) # (width, height) - 
 plt.show()
 ```
-
+![DE_Genes_Table](../tutorials/VeraFISH_Healthy_BMMC_results/DE_genes_Healthy_BMMC_table.png)
 ```python
 results_nb_df_2 = results_nb_df[results_nb_df['mean_exp'] > 0.05]
 up_gene = filtered_nb_df.loc[filtered_nb_df['bin_coeff'] > 0]
@@ -520,3 +523,4 @@ ax.set_ylim(0, 16)
 plt.tight_layout()
 plt.show()
 ```
+![DE_Genes_Volcano_Plot](../tutorials/VeraFISH_Healthy_BMMC_results/DE_genes_Healthy_BMMC_Shape_plot.png)
