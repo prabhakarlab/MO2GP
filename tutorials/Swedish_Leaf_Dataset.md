@@ -142,20 +142,7 @@ plt.show()
 ![Leaf_Image](../tutorials/Swedish_Leaf_data_results/leaf_image.png)
 ![Leaf_Contour](../tutorials/Swedish_Leaf_data_results/leaf_contour.png)
 
-## Run MO2GP shape embedding
-This step is where the MO2GP takes place. MO2GP Shape embedding uses the ShapeAlign, which preprocess the raw contours and performs advanced shape analysis using Fourier transforms and dimensionality reduction. The preprocess_contours step is a method to standardize all the contours to ensure all the contours are comparable. It processes the raw contours by interpolating, smoothing, and scaling them using the provided parameters, including num_workers, n_interp, n_smooth, and scale.
-•	n_interp 
-The number of points to interpolate for each contour, resulting in contours of uniform size. The default is 250. 
-•	n_smooth 
-The number of smoothing iterations to apply. The default is 0, meaning no smoothing is applied. Smoothing can be useful for some datasets, as it reduces noise and small irregularities and makes the overall shape easier to interpret. 
-•	scale 
-The method for scaling the contours to make them size-invariant. Currently only can use perimeter or area. The default is perimeter. 
-•	num_workers 
-The number of parallel workers to use for processing. This speeds up preprocessing when many contours are present. The default is 1; if 1 is chosen, processing is done sequentially. 
-
-Next, get_embedding is used to compute shape embeddings from the preprocessed contours using a Fourier-based method, which involves : 1. Converting representative contours coordinate to complex number, 2. Applying the Fast Fourier Transform to the contour coordinates breaks them into a combination of waves at different frequencies and representing the boundary as a sum of sinusoidal waves ,3. Scalling Fourier coefficients to emphasize certain frequencies and making the features more robust (a form of normalization to improve PCA results) ,4. Feature Selection (keep the most informative features) , 5. Applying PCA for dimensionality reduction. Finally, the quality of the embeddings is evaluated using a silhouette score to assess how well the features separate the shape classes. 
-
-In this tutorial, we set n_interp to 250 points, scale the shapes by perimeter so that all shapes have the same perimeter length, and used num_smooth = 0. However, users are able to adjust and optimize the parameters accordingly.  
+## Run MO2GP shape embedding 
 ```python
 #MO2GP
 model_align = ShapeAlign(contours=contour_input)
