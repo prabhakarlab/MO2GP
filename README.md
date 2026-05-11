@@ -78,7 +78,7 @@ Finally, the quality of the embeddings is evaluated using a silhouette score to 
 In this tutorial, we set **n_interp** to 250 points, **scale** the shapes by perimeter so that all shapes have the same perimeter length, and used **num_smooth = 0**.<br>
 
 ```python
-# Start shape analysis 
+# Start MO2GP shape analysis 
 model_align = ShapeAlign(contours=contour_input)
 model_align.preprocess_contours(num_workers=1, n_interp=250, n_smooth=0, scale='area')
 model_align.get_embedding(num_workers=1)
@@ -165,14 +165,6 @@ plt.show()
 More detailed tutorials on additional datasets are available here:
 
 [Swedish Leaf Dataset](./tutorials/Swedish_Leaf_Dataset.md) | [MPEG7 Dataset](./tutorials/MPEG7_Dataset.md) | [VeraFISH_Healthy_BMMC_Dataset](./tutorials/VeraFISH_Healthy_BMMC_Dataset.md) 
-
-
-
-
-
-
-
-
 
 
 
