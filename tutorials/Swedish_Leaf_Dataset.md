@@ -2,10 +2,11 @@
 To demonstrate the functionalities of MO2GP, in this tutorial we apply the pipeline on Swedish Leaf dataset from:
 Oskar J. O. Söderkvist, “Computer vision classifcation of leaves from swedish trees,” Master’s Thesis, Linkoping University, 2001.
 
-##Images Preprocessing <br>
+## Images Preprocessing <br>
 MO2GP takes the largest continuous contour for each object in image datasets and converted into a binary images as an input.<br>
 First,  extracts the largest external contour and the corresponding processed binary image from each sample and stores the contours, labels, and images for downstream analysis.<br>
 
+### Custom Function
 ```python
 from PIL import Image
 import numpy as np
@@ -66,6 +67,7 @@ def silhouette_score(dataIn, labels, metric='euclidean'):
     group_means = np.array([output_sample[labels == label].mean(axis=0) for label in unique_labels])
     return np.mean(group_means)
 ```
+## Extract Contour 
 ```python
 from tqdm import tqdm
 import os
@@ -116,6 +118,7 @@ with open("User_Path\\label_leaf.pkl", "wb") as f:
 # Save the img_input NumPy array to a file using NumPy's efficient .npy format
 np.save(file="User_Path\\\image_leaf.npy", arr=img_input)
 ```
+
 Once the contours are generated, the next step loads the contour, label, and image files produced in the previous step and visualizes the processed images together with their corresponding contours.<br>
 ```python
 # Visualize the processed images
@@ -141,6 +144,8 @@ plt.show()
 ```
 ![Leaf_Image](../tutorials/Swedish_Leaf_data_results/leaf_image.png)
 ![Leaf_Contour](../tutorials/Swedish_Leaf_data_results/leaf_contour.png)
+
+
 #Run MO2GP shape embedding
 This step is where the MO2GP takes place. MO2GP Shape embedding uses the ShapeAlign, which preprocess the raw contours and performs advanced shape analysis using Fourier transforms and dimensionality reduction. The preprocess_contours step is a method to standardize all the contours to ensure all the contours are comparable. It processes the raw contours by interpolating, smoothing, and scaling them using the provided parameters, including num_workers, n_interp, n_smooth, and scale.
 •	n_interp 
@@ -230,6 +235,8 @@ plt.title(f'Swedish Leaf Dataset, SI={ss:.4f}')
 plt.legend(title='', loc='center left', bbox_to_anchor=(1, 0.5), fontsize=8)
 plt.show()
 ```
+![Leaf_UMAP](../tutorials/Swedish_Leaf_data_results/Leafdata_UMAP.png)
+
 User also can visualize the shape represented by each cluster using the code below :
 ``` python
 from matplotlib.patches import Polygon
@@ -296,4 +303,4 @@ ax.legend(handles=legend_elements,loc='center left',bbox_to_anchor=(1.02, 0.5), 
 plt.tight_layout()
 plt.show()
 ```
-
+![Leaf_UMAP_contour](../tutorials/Swedish_Leaf_data_results/Leafdata_UMAP_contour_clean.png)
