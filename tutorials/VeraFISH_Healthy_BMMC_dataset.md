@@ -1,4 +1,4 @@
-# VerFISH Healthy BMMC dataset 
+# VeraFISH Healthy BMMC dataset 
 Finally, we applied shape embedding to our in-house spatial transcriptomics dataset, generated using the VeraFISH platform (492 genes).<br>
 Specifically, we focused on the nuclear morphology of the myeloid population derived from healthy Human Bone Marrow Mononuclear Cells (BMMCs).<br>
 
