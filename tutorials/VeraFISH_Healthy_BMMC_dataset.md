@@ -5,6 +5,7 @@ Specifically, we focused on the nuclear morphology of the myeloid population der
 In this tutorial, we provide the contour file  `Healthy_BMMC_monocytes_contours.pkl.gz` along with the expression and metadata file `Healthy_BMMC_monocytes_metadata.csv.gz`. 
 These datasets have already undergone several preprocessing steps, including quality control, batch correction, clustering, and cell-type annotation (as described in detail in our paper).
 
+## Load Contour and Metadata
 ```python
 import pickle
 import gzip
@@ -16,7 +17,7 @@ with gzip.open("User_Path\Healthy_BMMC_monocytes_contours.pkl.gz", "rb") as f:
 # Load metadata file
 df_BMMC_mono = pd.read_csv("User_Path\Healthy_BMMC_monocytes_metadata.csv.gz", index_col=0)
 
-# Create Anndata
+## Create Anndata
 metadata_cols = ["dataset", "batch", "area", "x", "y","cell_id","ncount","nodg","celltype"]
 gene_cols = [col for col in df_BMMC_mono.columns if col not in metadata_cols]
 gene_expression = df_BMMC_mono[gene_cols]
@@ -38,7 +39,7 @@ sc.pp.scale(adata)
 sc.tl.pca(adata, n_comps=30)
 sc.pp.neighbors(adata, n_neighbors=30, n_pcs=10)
 ```
-# Run MO2GP analysis
+## Run MO2GP analysis
 ```python
 model_align = ShapeAlign(contours = contours_input)
 model_align.preprocess_contours(num_workers=1, n_interp=250, n_smooth=0, scale='perimeter') # 'perimeter'
@@ -48,7 +49,7 @@ shape_embedding = model_align.shape_embedding
 contours = model_align.contours
 descriptor = model_align.descriptor
 ```
-# Creat sdata to store shape embedding, PCA , Clustering, shape DPT 
+## Create sdata to store shape embedding, PCA , Clustering, shape DPT 
 ```python
 sdata = ad.AnnData(shape_embedding, dtype=shape_embedding.dtype)
 sdata.obs['aspect_ratio'] = descriptor[:,0]
@@ -69,7 +70,7 @@ sdata.uns['iroot'] = np.argmin(np.std(np.linalg.norm(contours, axis=2), axis=1))
 scanpy.tl.diffmap(sdata, n_comps=15)
 scanpy.tl.dpt(sdata, n_dcs=15)
 ```
-# Visualize the aspect ratio and shape-DPT Pseudotime
+## Visualize the aspect ratio and shape-DPT Pseudotime
 ```python
 umap = sdata.obsm['X_umap']
 
@@ -98,7 +99,7 @@ plt.tight_layout()
 plt.show()
 ```
 ![Healthy_BMMC_UMAP](../tutorials/VeraFISH_Healthy_BMMC_results/UMAP_BMMC_monocytes_DPT_aspect_ratio.png)
-# Visualize the contour representative 
+## Visualize the contour representative 
 ```python
 from sklearn.cluster import KMeans
 import numpy as np
@@ -160,7 +161,7 @@ plt.tight_layout()
 plt.show()
 ```
 ![Healthy_BMMC_UMAP_contour](../tutorials/VeraFISH_Healthy_BMMC_results/UMAP_BMMC_monocytes_contour.png)
-# Custom function to calculate the Enrichment (Ratio of Fold)
+## Custom function to calculate the Enrichment (Ratio of Fold)
 ```python
 from collections import Counter
 def calculate_and_plot_enrichment_RatioOfFolds(
@@ -291,7 +292,7 @@ def calculate_and_plot_enrichment_RatioOfFolds(
         )
 ```
 
-# Local Enrichment using 1000 neighbors
+## Local Enrichment using 1000 neighbors
 ```python
 dims = sdata.obsm['X_pca'].shape[1]
 scanpy.pp.neighbors(
@@ -303,7 +304,7 @@ scanpy.pp.neighbors(
     key_added='nn_enrichment'
 )
 ```
-# Visualize the Cell type enrichment UMAP
+## Visualize the Cell type enrichment UMAP
 ```python
 # Define the cell types
 cell_types = ['Progenitor', 'Cycling', 'cDC2', 'NCM']
@@ -332,7 +333,7 @@ plt.show()
 ```
 ![Celltype_Enrichment_Plot](../tutorials/VeraFISH_Healthy_BMMC_results/Celltype_shape_enrichment_plot.png)
 
-# Shape Associated DE Genes analysis 
+## Shape Associated DE Genes analysis 
 ```python
 import statsmodels.api as sm
 import statsmodels.formula.api as smf
@@ -383,7 +384,7 @@ full_sc_df_counts = pd.concat([expression_df_counts, metadata_df], axis=1)
 full_sc_df_counts['library_size'] = adata_s.obs['library_size'].values
 adata_s
 ```
-# Run Negative Binomial analysis 
+## Run Negative Binomial analysis 
 ```python
 import pandas as pd
 import numpy as np
@@ -439,7 +440,7 @@ results_nb_df['p_adj'] = stats.false_discovery_control(results_nb_df['p_value'])
 results_nb_df = results_nb_df.sort_values(by='bin_coeff', ascending=False)
 results_nb_df['bin_coeff'] = 20*results_nb_df['bin_coeff']
 ```
-# Filter the significant DE Genes 
+## Filter the significant DE Genes 
 ```python
 # Filter for statistically significant genes
 filtered_nb_df = results_nb_df[results_nb_df['mean_exp'] > 0.05]
@@ -470,7 +471,7 @@ table.scale(1.5, 2.5) # (width, height) -
 plt.show()
 ```
 ![DE_Genes_Table](../tutorials/VeraFISH_Healthy_BMMC_results/DE_genes_Healthy_BMMC_table.png)
-# Visualize the DE Genes using Volcano Plot 
+## Visualize the DE Genes using Volcano Plot 
 ```python
 results_nb_df_2 = results_nb_df[results_nb_df['mean_exp'] > 0.05]
 up_gene = filtered_nb_df.loc[filtered_nb_df['bin_coeff'] > 0]
