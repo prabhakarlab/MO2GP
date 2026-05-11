@@ -48,6 +48,7 @@ shape_embedding = model_align.shape_embedding
 contours = model_align.contours
 descriptor = model_align.descriptor
 ```
+# Creat sdata to store shape embedding, PCA , Clustering, shape DPT 
 ```python
 sdata = ad.AnnData(shape_embedding, dtype=shape_embedding.dtype)
 sdata.obs['aspect_ratio'] = descriptor[:,0]
@@ -57,7 +58,6 @@ sdata.obs['extent'] = descriptor[:,3]
 sdata.obs['roundness'] = descriptor[:,4]
 sdata.obs['solidity'] = descriptor[:,5]
 sdata.obs['area'] = descriptor[:,6]
-
 
 sdata.obsm['X_pca'] = shape_embedding
 scanpy.pp.neighbors(sdata, use_rep='X_pca', n_neighbors=15)
@@ -69,7 +69,7 @@ sdata.uns['iroot'] = np.argmin(np.std(np.linalg.norm(contours, axis=2), axis=1))
 scanpy.tl.diffmap(sdata, n_comps=15)
 scanpy.tl.dpt(sdata, n_dcs=15)
 ```
-# Visualize the aspect ratio and shape-DPT 
+# Visualize the aspect ratio and shape-DPT Pseudotime
 ```python
 umap = sdata.obsm['X_umap']
 
@@ -160,7 +160,7 @@ plt.tight_layout()
 plt.show()
 ```
 ![Healthy_BMMC_UMAP_contour](../tutorials/VeraFISH_Healthy_BMMC_results/UMAP_BMMC_monocytes_contour.png)
-# Custom function to calculate the Enrichment (Ratio of ODD)
+# Custom function to calculate the Enrichment (Ratio of Fold)
 ```python
 from collections import Counter
 def calculate_and_plot_enrichment_RatioOfFolds(
@@ -291,6 +291,7 @@ def calculate_and_plot_enrichment_RatioOfFolds(
         )
 ```
 
+# Local Enrichment using 1000 neighbors
 ```python
 dims = sdata.obsm['X_pca'].shape[1]
 scanpy.pp.neighbors(
@@ -302,7 +303,7 @@ scanpy.pp.neighbors(
     key_added='nn_enrichment'
 )
 ```
-#Visualize the Cell type enrichment
+# Visualize the Cell type enrichment UMAP
 ```python
 # Define the cell types
 cell_types = ['Progenitor', 'Cycling', 'cDC2', 'NCM']
@@ -331,6 +332,7 @@ plt.show()
 ```
 ![Celltype_Enrichment_Plot](../tutorials/VeraFISH_Healthy_BMMC_results/Celltype_shape_enrichment_plot.png)
 
+# Shape Associated DE Genes analysis 
 ```python
 import statsmodels.api as sm
 import statsmodels.formula.api as smf
@@ -381,6 +383,7 @@ full_sc_df_counts = pd.concat([expression_df_counts, metadata_df], axis=1)
 full_sc_df_counts['library_size'] = adata_s.obs['library_size'].values
 adata_s
 ```
+# Run Negative Binomial analysis 
 ```python
 import pandas as pd
 import numpy as np
@@ -436,6 +439,7 @@ results_nb_df['p_adj'] = stats.false_discovery_control(results_nb_df['p_value'])
 results_nb_df = results_nb_df.sort_values(by='bin_coeff', ascending=False)
 results_nb_df['bin_coeff'] = 20*results_nb_df['bin_coeff']
 ```
+# Filter the significant DE Genes 
 ```python
 # Filter for statistically significant genes
 filtered_nb_df = results_nb_df[results_nb_df['mean_exp'] > 0.05]
@@ -466,6 +470,7 @@ table.scale(1.5, 2.5) # (width, height) -
 plt.show()
 ```
 ![DE_Genes_Table](../tutorials/VeraFISH_Healthy_BMMC_results/DE_genes_Healthy_BMMC_table.png)
+# Visualize the DE Genes using Volcano Plot 
 ```python
 results_nb_df_2 = results_nb_df[results_nb_df['mean_exp'] > 0.05]
 up_gene = filtered_nb_df.loc[filtered_nb_df['bin_coeff'] > 0]
