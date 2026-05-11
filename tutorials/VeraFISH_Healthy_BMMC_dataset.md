@@ -97,7 +97,7 @@ ax[1].set_ylabel('UMAP_2')
 plt.tight_layout()
 plt.show()
 ```
-![Healthy_BMMC_UMAP](./tutorials/VeraFISH_Healthy_BMMC_results/UMAP_BMMC_monocytes_DPT_aspect_ratio.png)
+![Healthy_BMMC_UMAP](../tutorials/VeraFISH_Healthy_BMMC_results/UMAP_BMMC_monocytes_DPT_aspect_ratio.png)
 # Visualize the contour representative 
 ```python
 from sklearn.cluster import KMeans
