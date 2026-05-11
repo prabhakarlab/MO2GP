@@ -73,7 +73,7 @@ Next, **get_embedding** is used to compute shape embeddings from the preprocesse
 4. Feature Selection (keep the most informative features)<br>
 5. Applying PCA for dimensionality reduction<br>
 
-Finally, the quality of the embeddings is evaluated using a silhouette score to assess how well the features separate the shape classes.<br>
+Finally, the quality of the shape embeddings is evaluated using a modified silhouette score where for each data point, we calculated the mean silhouette score within each shape class and then took the average of these per-shape class means.
 
 In this tutorial, we set **n_interp** to 250 points, **scale** the shapes by perimeter so that all shapes have the same perimeter length, and used **num_smooth = 0**.<br>
 
@@ -86,6 +86,12 @@ model_align.get_embedding(num_workers=1)
 shape_embedding = model_align.shape_embedding
 contours = model_align.contours
 descriptor = model_align.descriptor
+
+def silhouette_score(dataIn, labels, metric='euclidean'):    
+    output_sample = silhouette_samples(dataIn, labels, metric=metric)
+    unique_labels = np.unique(labels)
+    group_means = np.array([output_sample[labels == label].mean(axis=0) for label in unique_labels])
+    return np.mean(group_means)
 
 ss = silhouette_score(shape_embedding, labels, metric='euclidean')
 print(ss, shape_embedding.shape)
