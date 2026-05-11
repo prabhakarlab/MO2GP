@@ -39,7 +39,7 @@ shapes.preprocess_contours()
 
 ```
 ### Example Datasets
-To demonstrate the functionalities of MO2GP, in this tutorial we use 1 simulation dataset, 2 well known datasets, and 1 in house spatial transcriptomics data:<br>
+To demonstrate the functionalities of MO2GP, in this tutorial we use 1 simulation dataset, 2 widely known datasets, and 1 in house spatial transcriptomics data:<br>
 **1. Simulation dataset**<br>
 **2. Swedish Leaf dataset**<br>
 **3. MPEG-7 dataset**<br>
@@ -47,6 +47,17 @@ To demonstrate the functionalities of MO2GP, in this tutorial we use 1 simulatio
 
 # 1. Simulation dataset
 First, we validated the MO2GP shape embedding using a synthetic dataset of 2,160 simulated cells. This dataset consist of 18 distinct geometric categories derived from nine fundamental shapes—circle, ellipse, triangle, square, clover, pentagon, hexagon, boomerang, and nephroid—each generated at two aspect ratios (1 and 2). We also introduced low-frequency noise to the contours to mimic the real morphological variations found in real biological samples.
+
+### Load the contour file 
+```python
+# Load the contour file 
+with open("User_Path\\contour_simulation_list_18groups_2160.pkl", "rb") as f:
+    contour_input = pickle.load(f)
+with open("User_Path\\label_simulation_list_18groups_2160.pkl","rb") as f:
+    labels = pickle.load(f)
+labels = np.array(labels)
+```
+
 
 ### Run MO2GP analysis 
 This step is where the MO2GP takes place. MO2GP Shape embedding uses the **ShapeAlign**, which preprocess the raw contours and performs advanced shape analysis using Fourier transforms and dimensionality reduction. The **preprocess_contours** step is a method to standardize all the contours to ensure all the contours are comparable. It processes the raw contours by interpolating, smoothing, and scaling them using the provided parameters, including **num_workers**, **n_interp**, **n_smooth**, and **scale**.<br>
@@ -67,13 +78,6 @@ Finally, the quality of the embeddings is evaluated using a silhouette score to 
 In this tutorial, we set **n_interp** to 250 points, **scale** the shapes by perimeter so that all shapes have the same perimeter length, and used **num_smooth = 0**.<br>
 
 ```python
-# Load the contour file 
-with open("User_Path\\contour_simulation_list_18groups_2160.pkl", "rb") as f:
-    contour_input = pickle.load(f)
-with open("User_Path\\label_simulation_list_18groups_2160.pkl","rb") as f:
-    labels = pickle.load(f)
-labels = np.array(labels)
-
 # Start shape analysis 
 model_align = ShapeAlign(contours=contour_input)
 model_align.preprocess_contours(num_workers=1, n_interp=250, n_smooth=0, scale='area')
