@@ -56,7 +56,7 @@ with open("User_Path\\label_simulation_list_18groups_2160.pkl","rb") as f:
     labels = pickle.load(f)
 labels = np.array(labels)
 ```
-*This is the contour for simulation dataset of 18 shapes**
+#### Contour for simulation dataset of 18 shapes
 ![Simulated_data_Contour](./tutorials/Simulation_results/simulation_ist_18groups_2160_contours.png)
 
 ### Run MO2GP analysis 
