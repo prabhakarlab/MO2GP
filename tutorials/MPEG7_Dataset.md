@@ -8,8 +8,8 @@ https://dabi.temple.edu/external/shape/MPEG7/dataset.html<br>
 The raw imagesof MPEG dataset underwent a preprocessing pipeline to extract the largest contour, following the same method used for our simulation dataset.<br>
 In this tutorial, we will use on a few subset of the MPEG-7 dataset, as visualizing all 70 shape categories simultaneously in a UMAP can be challenging to interpret.<br>
 
-3a. MPEG7 dataset 15 shapes
-# Load the contour file 
+## 3a. MPEG7 dataset 15 shapes
+### Load the contour file 
 ```python
 import pickle
 
@@ -44,7 +44,7 @@ for i in range(len(idx)):
 plt.tight_layout()
 plt.show()
 ```
-# Run MO2GP analysis 
+### Run MO2GP analysis 
 ```python
 model_align = ShapeAlign(contours=contour_input)
 model_align.preprocess_contours(num_workers=1, n_interp=250, n_smooth=0, scale='perimeter') #
@@ -57,5 +57,120 @@ descriptor = model_align.descriptor
 ss = silhouette_score(shape_embedding, labels, metric='euclidean')
 print(ss, shape_embedding.shape)
 ```
+### UMAP Visualization
+```python
+# Define a list of 15 distinct colors 
+color_list = [
+    (0.788, 0.498, 0.498), # brown
+    (0, 0, 0),             # black
+    (1.0, 0.647, 0.823),   # hotpink
+    (0.701, 0.4, 0.701),   # purple
+    (0.4, 0.4, 1.0),       # blue
+    (0.4, 0.701, 0.4),     # green
+    (0.456, 0.632, 0.779), # steel blue
+    (1.0, 0.788, 0.4)     # orange
+    (1.0, 0.4, 0.4),       # red
+    (0.6, 0.4, 0.2)       # dark brown 
+    (0.5, 0.5, 0.5),       # gray
+    (0.8, 0.8, 0.0),       # yellow
+    (0.5, 0.0, 0.5),       # dark purple
+    (0.0, 0.6, 0.6),       # teal
+    (1.0, 0.6, 0.0)       # dark orange
+]
 
+shapes=['Glas','Heart','bell','brick','cellular_phone',
+         'children','device1','device5','flatfish','fork', 
+         'fountain','horseshoe','spoon','spring','teddy']
 
+shape_color_dict = dict(zip(shapes, color_list))
+
+fit = umap.UMAP(random_state=19)
+embedding = fit.fit_transform(shape_embedding)
+
+for shape in np.unique(labels):
+    plt.scatter(
+        embedding[labels == shape, 0],
+        embedding[labels == shape, 1],
+        s=5,
+        c=shape_color_dict[shape],
+        label=shape
+    )
+
+legend_elements = [
+    Line2D([0], [0], color=color_list[i], lw=3, label=shapes[i])
+    for i in range(5)
+]
+
+plt.xlabel('UMAP1')
+plt.ylabel('UMAP2')
+plt.title(f'Subset of MPEG-7 Dataset UMAP 15 shapes, SI={ss:.4f}', fontweight='bold', fontsize=12)
+plt.legend(handles=legend_elements,loc='center left',bbox_to_anchor=(1.02, 0.5), fontsize=15)
+plt.show()
+```
+### Visualize the representative contour
+```python
+from matplotlib.patches import Polygon
+import matplotlib.pyplot as plt
+from matplotlib.lines import Line2D
+
+# Map shape name → index
+shape_to_idx = {shape: i for i, shape in enumerate(shapes)}
+
+# Convert string labels → numeric labels
+# labels must be a list/array of shape names
+species_labels = np.array([shape_to_idx[l] for l in labels])
+
+# UMAP embedding
+fit = umap.UMAP(random_state=19)
+embedding = fit.fit_transform(shape_embedding)
+
+# pick one representative per species 
+representative_indices = []
+for species_idx in range(5):
+    idxs = np.where(species_labels == species_idx)[0]
+    center = embedding[idxs].mean(axis=0)
+    dists = np.linalg.norm(embedding[idxs] - center, axis=1)
+    representative_indices.append(idxs[np.argmin(dists)])
+scale = 1.2
+fig, ax = plt.subplots(figsize=(8, 8))
+
+#overlay contours 
+for idx in representative_indices:
+    contour = contours[idx]
+    contour = contour - contour.mean(axis=0)
+    # rotate 180° (flip vertically and horizontally)
+    theta = np.pi  # 180 degrees
+    R = np.array([[np.cos(theta), -np.sin(theta)],
+                  [np.sin(theta),  np.cos(theta)]])
+    contour = contour @ R.T
+    # normalize contour size 
+    contour = contour / np.max(np.linalg.norm(contour, axis=1))
+    # scale
+    contour = contour * scale
+    # shift to UMAP position
+    contour = contour + embedding[idx]
+    # add polygon
+    ax.add_patch(
+        Polygon(
+            contour,
+            closed=True,
+            fill=False,
+            edgecolor=color_list[species_labels[idx]],
+            linewidth=2.5
+        )
+    )
+
+legend_elements = [
+    Line2D([0], [0], color=color_list[i], lw=3, label=shapes[i])
+    for i in range(5)
+]
+
+ax.set_xlabel("UMAP1")
+ax.set_ylabel("UMAP2")
+plt.title(f'Subset of MPEG-7 Dataset UMAP (circle) contour, SI={ss:.4f}',fontweight='bold')
+ax.axis("equal")
+ax.set_aspect("equal", adjustable="box")
+ax.legend(handles=legend_elements,loc='center left',bbox_to_anchor=(1.02, 0.5), fontsize=10)
+plt.tight_layout()
+plt.show()
+```
