@@ -44,6 +44,8 @@ for i in range(len(idx)):
 plt.tight_layout()
 plt.show()
 ```
+![MPEG7_15shapes_Image](../tutorials/MPEG_results/images_MPEG7_15groups.png)
+![MPEG7_15shape_Contour](../tutorials/MPEG_results/contour_MPEG7_15groups.png)
 ### Run MO2GP analysis 
 ```python
 model_align = ShapeAlign(contours=contour_input)
