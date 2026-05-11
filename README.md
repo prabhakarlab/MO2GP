@@ -1,6 +1,5 @@
 # MO2GP Project
-**Morphology O(2)-invariant General-purpose Projection** (MO2GP) is a highly discriminative, efficient and interpretable algorithm guaranteeing rotation- and reflection-invariant shape representation.
-It uses Fourier descriptors of complex-plane representations of contour position and regularity, with feature selection and dimensionality reduction for noise reduction and scalability<br>. 
+Morphology O(2)-invariant General-purpose Projection (MO2GP) is a shape embedding that is invariant to rotation, reflection, scale, and translation. This pipeline uses initial shape contours, applies a Fourier transform to compute magnitude features, and performs dimensionality reduction to obtain the most informative representations. It is suitable for large-scale morphological datasets. The pipeline is implemented in a Python environment and run using Jupyter Notebook.<br>
 
 ## 📥 How to Install
 
@@ -39,6 +38,25 @@ shapes = ShapeAlign([circle])
 shapes.preprocess_contours()
 
 ```
+To demonstrate the functionalities of MO2GP, in this tutorial we use 1 simulation dataset, 2 well known datasets, and 1 in house spatial transcriptomics data:
+1. Simulation dataset<br>
+2. Swedish Leaf dataset<br>
+3. MPEG-7 dataset<br>
+4. VeraFISH Healthy BMMC dataset<br>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 ## Running ShapeAlign in Jupyter Notebook
