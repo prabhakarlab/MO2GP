@@ -39,7 +39,7 @@ shapes.preprocess_contours()
 
 ```
 ### Example Datasets
-To demonstrate the functionalities of MO2GP, in this tutorial we use 1 simulation dataset, 2 widely known datasets, and 1 in house spatial transcriptomics data:<br>
+To demonstrate the functionalities of MO2GP, in this tutorial we utilize one simulation dataset, two widely recognized datasets, and one in-house spatial transcriptomics dataset:<br>
 **1. Simulation dataset**<br>
 **2. Swedish Leaf dataset**<br>
 **3. MPEG-7 dataset**<br>
@@ -47,7 +47,6 @@ To demonstrate the functionalities of MO2GP, in this tutorial we use 1 simulatio
 
 # 1. Simulation dataset
 First, we validated the MO2GP shape embedding using a synthetic dataset of 2,160 simulated shapes. This dataset consist of 18 distinct geometric categories derived from nine fundamental shapes—circle, ellipse, triangle, square, clover, pentagon, hexagon, boomerang, and nephroid—each generated at two aspect ratios (1 and 2). We also introduced low-frequency noise to the contours and further expanded by subjecting each base shape to four orientation conditions: original, random rotation, vertical flip, and combined rotation with flipping. For each sample in the datasets, we extracted the largest continuous contour corresponding to the outer boundary of the object. Contours were extracted using the OpenCV findContours function. Each selected contour was subsequently converted into a binary mask and saved as a `contour.pkl` file as the input for MO2GP shape analysis. The contour file(`contour_simulation_list_18groups_2160.pkl`) and the label file (`label_simulation_list_18groups_2160.pkl`) are available in `data` folder. 
-
 
 ### Load the contour file 
 ```python
@@ -74,7 +73,7 @@ Next, **get_embedding** is used to compute shape embeddings from the preprocesse
 4. Feature Selection (keep the most informative features)<br>
 5. Applying PCA for dimensionality reduction<br>
 
-Finally, the quality of the embeddings is evaluated using a silhouette score to assess how well the features separate the shape classes.
+Finally, the quality of the embeddings is evaluated using a silhouette score to assess how well the features separate the shape classes.<br>
 
 In this tutorial, we set **n_interp** to 250 points, **scale** the shapes by perimeter so that all shapes have the same perimeter length, and used **num_smooth = 0**.<br>
 
