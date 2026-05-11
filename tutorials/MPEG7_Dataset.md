@@ -1,13 +1,13 @@
 # 3. MPEG-7 Dataset 
 Next, we used the widely recognized MPEG-7 Dataset. This dataset consists of 70 basic shape categories, with 20 images per category, and is a standard benchmark for evaluating the performance of shape similarity methods.<br>
 
-
 Reference:<br>
 https://dabi.temple.edu/external/shape/MPEG7/dataset.html<br>
 
-The raw imagesof MPEG dataset underwent a preprocessing pipeline to extract the largest contour, following the same method used for our simulation dataset.<br>
-In this tutorial, we will use on a few subset of the MPEG-7 dataset, as visualizing all 70 shape categories simultaneously in a UMAP can be challenging to interpret.<br>
+The raw images of MPEG dataset underwent an image preprocessing pipeline to extract the largest contour, following the same method used for Swedish Leaf dataset.<br>
+The contour and label files are available in `data` folder. 
 
+In this tutorial, we will use a few subset of the MPEG-7 dataset, as visualizing all 70 shape categories simultaneously in a UMAP can be challenging to interpret.<br>
 ## 3a. MPEG7 dataset 15 shapes
 ### Load the contour file 
 ```python
@@ -23,7 +23,7 @@ img_input = np.load(r"User_Path\image_MPEG_15groups.npy")
 
 # Visualize the processed images 
 idx = np.arange(0, labels.shape[0], 20) # start= 0 from the first image,stop=labels.shape[0] = 1400 → go up to 1400 (not inclusive),step=20(pick every 20th image)
-fig, ax = plt.subplots(ncols=5, nrows=1, figsize=(20, 4))
+fig, ax = plt.subplots(ncols=5, nrows=4, figsize=(25,20))
 ax = ax.flatten()
 for i in range(len(idx)):
     temp = img_input[idx[i]]
@@ -34,7 +34,7 @@ plt.show()
 
 # Visualize the contour
 idx = np.arange(0, labels.shape[0], 20)
-fig, ax = plt.subplots(ncols=5, nrows=1, figsize=(15, 3))
+fig, ax = plt.subplots(ncols=5, nrows=4, figsize=(20, 25))
 ax = ax.flatten()
 for i in range(len(idx)):
     temp = contour_input[idx[i]]
@@ -49,7 +49,7 @@ plt.show()
 ### Run MO2GP analysis 
 ```python
 model_align = ShapeAlign(contours=contour_input)
-model_align.preprocess_contours(num_workers=1, n_interp=250, n_smooth=0, scale='perimeter') #
+model_align.preprocess_contours(num_workers=1, n_interp=250, n_smooth=0, scale='perimeter') 
 model_align.get_embedding(num_workers=1)
 
 shape_embedding = model_align.shape_embedding
@@ -179,3 +179,102 @@ plt.tight_layout()
 plt.show()
 ```
 ![MPEG7_15shape_Contour](../tutorials/MPEG_results/MPEG7_MO2GP_UMAP_15groups_contours.png)
+
+## 3b. MPEG7 dataset device groups
+This subset of MPEG7 dataset consist of 10 shape groups labelled as device_0 till device_9. The "devices" range from smooth, recognizable geometric shapes to more complex, jagged forms.
+### Load the file and visualize 
+```python
+import pickle
+
+# Load contour, label, and image files
+with open(r"User_Path\contour_MPEG_device.pkl", 'rb') as f:
+    contour_input = pickle.load(f)
+with open(r"User_Path\label_MPEG_device.pkl", 'rb') as f:
+    labels = pickle.load(f)
+labels = np.array(labels)
+img_input = np.load(r"User_Path\image_MPEG_device.npy")
+
+# Visualize the processed images 
+idx = np.arange(0, labels.shape[0], 20) # start= 0 from the first image,stop=labels.shape[0] = 1400 → go up to 1400 (not inclusive),step=20(pick every 20th image)
+fig, ax = plt.subplots(ncols=5, nrows=2, figsize=(20, 8))
+ax = ax.flatten()
+for i in range(len(idx)):
+    temp = img_input[idx[i]]
+    ax[i].imshow(temp)
+    ax[i].set_title(f"Image {i}")
+plt.tight_layout()
+plt.show()
+
+# Visualize the contour
+idx = np.arange(0, labels.shape[0], 20)
+fig, ax = plt.subplots(ncols=5, nrows=1, figsize=(20, 8))
+ax = ax.flatten()
+for i in range(len(idx)):
+    temp = contour_input[idx[i]]
+    ax[i].plot(temp[:, 0], temp[:, 1])
+    ax[i].invert_yaxis() 
+    ax[i].set_title(f"Contour {i}")
+plt.tight_layout()
+plt.show()
+```
+![MPEG7_device_Image](../tutorials/MPEG_results/processed_images_MPEG7_device.png)
+![MPEG7_device_Contour](../tutorials/MPEG_results/contour_MPEG7_device.png)
+
+### Run MO2GP analysis 
+```python
+model_align = ShapeAlign(contours=contour_input)
+model_align.preprocess_contours(num_workers=1, n_interp=250, n_smooth=0, scale='perimeter') 
+model_align.get_embedding(num_workers=1)
+
+shape_embedding = model_align.shape_embedding
+contours = model_align.contours
+descriptor = model_align.descriptor
+
+ss = silhouette_score(shape_embedding, labels, metric='euclidean')
+print(ss, shape_embedding.shape)
+```
+### UMAP Visualization
+```python
+# Define a list of 15 distinct colors 
+color_list = [
+    (0.788, 0.498, 0.498), # brown
+    (0, 0, 0),             # black
+    (1.0, 0.647, 0.823),   # hotpink
+    (0.701, 0.4, 0.701),   # purple
+    (0.4, 0.4, 1.0),       # blue
+    (0.4, 0.701, 0.4),     # green
+    (0.456, 0.632, 0.779), # steel blue
+    (1.0, 0.788, 0.4)     # orange
+    (1.0, 0.4, 0.4),       # red
+    (0.6, 0.4, 0.2)       # dark brown 
+]
+
+shapes=['device0', 'device1', 'device2', 'device3', 'device4','device5', 'device6', 'device7', 'device8', 'device9']
+
+shape_color_dict = dict(zip(shapes, color_list))
+
+fit = umap.UMAP(random_state=19)
+embedding = fit.fit_transform(shape_embedding)
+
+for shape in np.unique(labels):
+    plt.scatter(
+        embedding[labels == shape, 0],
+        embedding[labels == shape, 1],
+        s=5,
+        c=shape_color_dict[shape],
+        label=shape
+    )
+
+legend_elements = [
+    Line2D([0], [0], color=color_list[i], lw=3, label=shapes[i])
+    for i in range(10)
+]
+
+plt.xlabel('UMAP1')
+plt.ylabel('UMAP2')
+plt.title(f'Subset of MPEG-7 Dataset UMAP device, SI={ss:.4f}', fontweight='bold', fontsize=12)
+plt.legend(handles=legend_elements,loc='center left',bbox_to_anchor=(1.02, 0.5), fontsize=15)
+plt.show()
+```
+![MPEG7_device_UMAP](../tutorials/MPEG_results/MPEG7_MO2GP_UMAP_device.png)
+![MPEG7_device_UMAP_contour](../tutorials/MPEG_results/MPEG7_MO2GP_UMAP_device_contour.png)
