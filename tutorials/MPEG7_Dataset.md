@@ -8,6 +8,7 @@ The raw images of MPEG dataset underwent an image preprocessing pipeline to extr
 
 In this tutorial, we will use a few subset of the MPEG-7 dataset to showcase the MO2GP shape embedding analysis, as visualizing all 70 shape categories simultaneously in a UMAP can be challenging to interpret.<br>
 ## 3a. MPEG7 dataset 15 shapes
+
 ### Load the contour file 
 ```python
 import pickle
