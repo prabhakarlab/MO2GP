@@ -129,7 +129,7 @@ embedding = fit.fit_transform(shape_embedding)
 
 # pick one representative per species 
 representative_indices = []
-for species_idx in range(5):
+for species_idx in range(15):
     idxs = np.where(species_labels == species_idx)[0]
     center = embedding[idxs].mean(axis=0)
     dists = np.linalg.norm(embedding[idxs] - center, axis=1)
@@ -165,7 +165,7 @@ for idx in representative_indices:
 
 legend_elements = [
     Line2D([0], [0], color=color_list[i], lw=3, label=shapes[i])
-    for i in range(5)
+    for i in range(15)
 ]
 
 ax.set_xlabel("UMAP1")
@@ -467,4 +467,94 @@ plt.show()
 ```
 ![MPEG7_curve_UMAP](../tutorials/MPEG_results/MPEG7_MO2GP_UMAP_3specificgroups_curved.png)
 
+### Visualize the representative contour
+```python
+from sklearn.cluster import KMeans
+from scipy.spatial.distance import cdist
 
+shape_to_idx = {shape: i for i, shape in enumerate(shapes)}
+species_labels = np.array([shape_to_idx[l] for l in labels])
+
+x_min, x_max = -8, 16
+y_min, y_max = 1, 11
+
+# Setup Constants & Rotation 
+theta = np.pi  # 180 degrees
+R = np.array([[np.cos(theta), -np.sin(theta)],
+              [np.sin(theta),  np.cos(theta)]])
+
+density_factor = 0.015 
+# Base scale for the background of shapes
+base_scale = max(x_max - x_min, y_max - y_min) * density_factor
+# Larger scale for the representatives
+rep_scale = base_scale * 3
+
+# Identify Representatives (with Sub-clustering for Lizzard/Sea Snake)
+representative_indices = []
+
+# List of species you want to split into 2 clusters
+split_species = ['lizzard', 'sea_snake']
+
+for species_idx, name in enumerate(shapes):
+    mask = (species_labels == species_idx)
+    group_points = embedding[mask]
+    global_indices = np.where(mask)[0]
+    
+    if len(group_points) == 0:
+        continue
+
+    # Logic: If it's one of the split species, find 2 representatives
+    if name in split_species:
+        # Run K-Means to find the two distinct clusters in UMAP space
+        kmeans = KMeans(n_clusters=2, n_init=10, random_state=42).fit(group_points)
+        centers = kmeans.cluster_centers_
+        labels_sub = kmeans.labels_
+        
+        for i in range(2):
+            sub_mask = (labels_sub == i)
+            sub_points = group_points[sub_mask]
+            sub_global_indices = global_indices[sub_mask]
+            
+            # Find medoid for this sub-cluster
+            distances = cdist(sub_points, centers[i].reshape(1, -1))
+            local_medoid = np.argmin(distances)
+            representative_indices.append(sub_global_indices[local_medoid])
+    
+    else:
+        # Standard logic for other species (1 representative)
+        centroid = group_points.mean(axis=0).reshape(1, -1)
+        distances = cdist(group_points, centroid)
+        local_medoid = np.argmin(distances)
+        representative_indices.append(global_indices[local_medoid])
+
+# Plot
+fig, ax = plt.subplots(figsize=(10, 8))
+ax.set_xlim(x_min, x_max)
+ax.set_ylim(y_min, y_max)
+
+# Plot Background
+for idx, (point, contour_raw) in enumerate(zip(embedding, contours)):
+    if (x_min <= point[0] <= x_max) and (y_min <= point[1] <= y_max):
+        c = (contour_raw - contour_raw.mean(axis=0)) @ R.T
+        c = (c / np.max(np.linalg.norm(c, axis=1))) * base_scale + point
+        ax.add_patch(Polygon(c, closed=True, fill=True, alpha=0.2,
+                             facecolor=color_list[species_labels[idx]], edgecolor='none'))
+
+# Plot Representatives contour
+for idx in representative_indices:
+    point = embedding[idx]
+    c = (contours[idx] - contours[idx].mean(axis=0)) @ R.T
+    c = (c / np.max(np.linalg.norm(c, axis=1))) * rep_scale + point
+    
+    ax.add_patch(Polygon(c, closed=True, fill=True, facecolor=color_list[species_labels[idx]],
+                         # edgecolor='white',
+                         linewidth=1.5, zorder=10))
+    
+    # Label
+    ax.text(point[0], point[1] + rep_scale, shapes[species_labels[idx]], 
+            ha='center', fontweight='bold', bbox=dict(facecolor='white', alpha=0.6, lw=0))
+
+plt.title(f'MPEG-7 Representative (curved) Contours\nSilhouette Index: {ss:.4f}', fontweight="bold", fontsize=15)
+plt.show()
+```
+![MPEG7_curve_UMAP_contour](../tutorials/MPEG_results/MPEG7_MO2GP_UMAP_3specificgroups_curved_contour_representative.png)
