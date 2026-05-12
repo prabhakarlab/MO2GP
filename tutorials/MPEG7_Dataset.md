@@ -372,3 +372,7 @@ plt.show()
 ![MPEG7_circle_UMAP](../tutorials/MPEG_results/MPEG7_MO2GP_UMAP_circle.png)
 ![MPEG7_circle_UMAP_Contour](../tutorials/MPEG_results/MPEG7_MO2GP_UMAP_circle_contour.png)
 
+Despite the circular nature of all five classes, the UMAP showed MO2GP effectively separates the shapes into two distinct zones: the "irregular" shapes (pocket and HCircle) are partitioned toward the left and bottom of the UMAP, while the primary circular cluster (apple, device9, and octopus) occupies the right side of the plot. In this circular group, device9 and octopus are clustered tightly due to their similar high-frequency structural details, whereas the apple is positioned further away because of its low-frequency outline.
+
+
+
