@@ -376,5 +376,95 @@ plt.show()
 
 Despite the circular nature of all five classes, the UMAP showed MO2GP effectively separates the shapes into two distinct zones: the "irregular" shapes (pocket and HCircle) are partitioned toward the left and bottom of the UMAP, while the primary circular cluster (apple, device9, and octopus) occupies the right side of the plot. In this circular group, device9 and octopus are clustered tightly due to their similar high-frequency structural details, whereas the apple is positioned further away because of its low-frequency outline.
 
+## 3D. MPEG7 dataset circle groups
+The last subset of MPEG7 dataset is comprised of three groups characterized by their elongated and curving forms: the horseshoe, lizard, and sea_snake.
+### Load the file and visualize 
+```python
+import pickle
+
+# Load files
+with open(r"User_Path\contour_MPEG_3_similar_groups.pkl", 'rb') as f:
+    contour_input = pickle.load(f)
+with open(r"User_Path\label_MPEG_3_similar_groups.pkl", 'rb') as f:
+    labels = pickle.load(f)
+labels = np.array(labels)
+img_input = np.load(r"User_Path\image_MPEG_3_similar_groups.npy")
+
+# Visualize the processed images 
+idx = np.arange(0, labels.shape[0], 20) 
+fig, ax = plt.subplots(ncols=3, nrows=1, figsize=(15, 4))
+ax = ax.flatten()
+for i in range(len(idx)):
+    temp = img_input[idx[i]]
+    ax[i].imshow(temp)
+    ax[i].set_title(f"Image {i}")
+plt.tight_layout()
+plt.show()
+
+# Visualize the contour
+idx = np.arange(0, labels.shape[0], 20)
+fig, ax = plt.subplots(ncols=3, nrows=1, figsize=(15, 4))
+ax = ax.flatten()
+for i in range(len(idx)):
+    temp = contour_input[idx[i]]
+    ax[i].plot(temp[:, 0], temp[:, 1])
+    ax[i].invert_yaxis() 
+    ax[i].set_title(f"Contour {i}")
+plt.tight_layout()
+plt.show()
+```
+![MPEG7_curve_Image](../tutorials/MPEG_results/processed_images_MPEG_3groups_specific_curved.png)
+![MPEG7_curve_Contour](../tutorials/MPEG_results/contour_MPEG_3groups_specific_curved.png)
+
+### Run MO2GP analysis 
+```python
+model_align = ShapeAlign(contours=contour_input)
+model_align.preprocess_contours(num_workers=1, n_interp=250, n_smooth=0, scale='perimeter') 
+model_align.get_embedding(num_workers=1)
+
+shape_embedding = model_align.shape_embedding
+contours = model_align.contours
+descriptor = model_align.descriptor
+
+ss = silhouette_score(shape_embedding, labels, metric='euclidean')
+print(ss, shape_embedding.shape)
+```
+### UMAP Visualization
+```python
+# Define a list of 3 distinct colors 
+color_list = [
+    (1.0, 0.647, 0.823),   # hotpink
+    (0.701, 0.4, 0.701),   # purple
+    (0.4, 0.701, 0.4),     # green
+]
+
+shapes=['horseshoe','lizzard','sea_snake']
+
+shape_color_dict = dict(zip(shapes, color_list))
+
+fit = umap.UMAP(random_state=19)
+embedding = fit.fit_transform(shape_embedding)
+
+for shape in np.unique(labels):
+    plt.scatter(
+        embedding[labels == shape, 0],
+        embedding[labels == shape, 1],
+        s=5,
+        c=shape_color_dict[shape],
+        label=shape
+    )
+
+legend_elements = [
+    Line2D([0], [0], color=color_list[i], lw=3, label=shapes[i])
+    for i in range(3)
+]
+
+plt.xlabel('UMAP1')
+plt.ylabel('UMAP2')
+plt.title(f'Subset of MPEG-7 Dataset UMAP curve, SI={ss:.4f}', fontweight='bold', fontsize=12)
+plt.legend(handles=legend_elements,loc='center left',bbox_to_anchor=(1.02, 0.5), fontsize=15)
+plt.show()
+```
+![MPEG7_curve_UMAP](../tutorials/MPEG_results/MPEG7_MO2GP_UMAP_3specificgroups_curved.png)
 
 
