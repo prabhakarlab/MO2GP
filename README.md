@@ -37,7 +37,7 @@ circle = np.array([[np.cos(t), np.sin(t)] for t in np.linspace(0, 2*np.pi, 100, 
 shapes = ShapeAlign([circle])
 shapes.preprocess_contours()
 ```
-### Example Datasets
+## Example Datasets
 To demonstrate the functionalities of MO2GP, in this tutorial we utilize one simulation dataset, two widely recognized datasets, and one in-house spatial transcriptomics dataset:<br>
 **1. Simulation dataset**<br>
 **2. Swedish Leaf dataset**<br>
@@ -45,7 +45,7 @@ To demonstrate the functionalities of MO2GP, in this tutorial we utilize one sim
 **4. VeraFISH Healthy BMMC dataset**<br>
 
 # 1. Simulation dataset
-First, we validated the MO2GP shape embedding using a synthetic dataset of 2,160 simulated shapes. This dataset consist of 18 distinct geometric categories derived from nine fundamental shapes—circle, ellipse, triangle, square, clover, pentagon, hexagon, boomerang, and nephroid—each generated at two aspect ratios (1 and 2). We also introduced low-frequency noise to the contours and further expanded by subjecting each base shape to four orientation conditions: original, random rotation, vertical flip, and combined rotation with flipping. For each sample in the datasets, we extracted the largest continuous contour corresponding to the outer boundary of the object. Contours were extracted using the OpenCV findContours function. Each selected contour was subsequently converted into a binary mask and saved as a `contour.pkl` file as the input for MO2GP shape analysis. The contour file(`contour_simulation_list_18groups_2160.pkl`) and the label file (`label_simulation_list_18groups_2160.pkl`) are available in `data` folder. 
+First, we validated the MO2GP shape embedding using a synthetic dataset of 2,160 simulated shapes. This dataset consist of 18 distinct geometric categories derived from nine fundamental shapes—circle, ellipse, triangle, square, clover, pentagon, hexagon, boomerang, and nephroid—each generated at two aspect ratios (1 and 2). We also introduced noise to the contours and further expanded by subjecting each base shape to four orientation conditions: original, random rotation, vertical flip, and combined rotation with flipping. For each sample in the datasets, we extracted the largest continuous contour corresponding to the outer boundary of the object. Contours were extracted using the OpenCV findContours function. Each selected contour was subsequently converted into a binary mask and saved as a `contour.pkl` file as the input for MO2GP shape analysis. The contour file(`contour_simulation_list_18groups_2160.pkl`) and the label file (`label_simulation_list_18groups_2160.pkl`) are available in `data` folder. 
 
 ### Load the file 
 ```python
@@ -60,7 +60,8 @@ labels = np.array(labels)
 ![Simulated_data_Contour](./tutorials/Simulation_results/simulation_ist_18groups_2160_contours.png)
 
 ### Run MO2GP analysis 
-This step is where the MO2GP takes place. MO2GP Shape embedding uses the **ShapeAlign**, which preprocess the raw contours and performs advanced shape analysis using Fourier transforms and dimensionality reduction. The **preprocess_contours** step is a method to standardize all the contours to ensure all the contours are comparable. It processes the raw contours by interpolating, smoothing, and scaling them using the provided parameters, including **num_workers**, **n_interp**, **n_smooth**, and **scale**.<br>
+This step is where the MO2GP takes place. MO2GP Shape embedding uses the **ShapeAlign** class, which preprocess the raw shape outlines (contours) and performs advanced shape analysis using Fourier transforms and dimensionality reduction.<br>
+First, the **preprocess_contours** step is a method to standardize all the contours to ensure all the contours are comparable. It processes the raw contours by centering, orientation (ensure the contour has clockwise orientation and is closed), interpoiation, smoothing (applies forward-backward smoothing to the contour), and normalize the contour. The **preprocess_contours** step also has provided parameters, including **num_workers**, **n_interp**, **n_smooth**, and **scale**.<br>
 • **n_interp** :The number of points to interpolate for each contour, resulting in contours of uniform size. The default is 250.<br>
 • **n_smooth** :The number of smoothing iterations to apply. The default is 0, meaning no smoothing is applied. Smoothing can be useful for some datasets, as it reduces noise and small irregularities and makes the overall shape easier to interpret.<br>
 • **scale**    :The method for scaling the contours to make them size-invariant. Currently only can use perimeter or area. The default is perimeter.<br>
@@ -68,8 +69,8 @@ This step is where the MO2GP takes place. MO2GP Shape embedding uses the **Shape
 
 Next, **get_embedding** is used to compute shape embeddings from the preprocessed contours using a Fourier-based method, which involves : 
 1. Converting representative contours coordinate to complex number<br>
-2.Applying the Fast Fourier Transform to the contour coordinates breaks them into a combination of waves at different frequencies and representing the boundary as a sum of sinusoidal waves<br>
-3. Scalling Fourier coefficients to emphasize certain frequencies and making the features more robust (a form of normalization to improve PCA results)<br>
+2. Applying the Fast Fourier Transform to the contour coordinates breaks them into a combination of waves at different frequencies and representing the boundary as a sum of sinusoidal waves<br>
+3. Scalling Fourier coefficients which is analogously to the Sobolev H2 metric to emphasize certain frequencies and making the features more robust (a form of normalization to improve PCA results)<br>
 4. Feature Selection (keep the most informative features)<br>
 5. Applying PCA for dimensionality reduction<br>
 
