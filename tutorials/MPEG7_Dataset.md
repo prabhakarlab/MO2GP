@@ -4,9 +4,9 @@ Next, we used the widely recognized MPEG-7 Dataset. This dataset consists of 70 
 Reference:<br>
 https://dabi.temple.edu/external/shape/MPEG7/dataset.html<br>
 
-The raw images of MPEG dataset underwent an image preprocessing pipeline to extract the largest contour, following the same method used for Swedish Leaf dataset.The contour,image, and label files are available in `data` folder. 
+The raw images of MPEG dataset underwent an image preprocessing pipeline to extract the largest contour, following the same method used for Swedish Leaf dataset. The contour,image, and label files are available in `data` folder. 
 
-In this tutorial, we will use a few subset of the MPEG-7 dataset, as visualizing all 70 shape categories simultaneously in a UMAP can be challenging to interpret.<br>
+In this tutorial, we will use a few subset of the MPEG-7 dataset to showcase the MO2GP shape embedding analysis, as visualizing all 70 shape categories simultaneously in a UMAP can be challenging to interpret.<br>
 ## 3a. MPEG7 dataset 15 shapes
 ### Load the contour file 
 ```python
@@ -278,7 +278,7 @@ plt.show()
 ![MPEG7_device_UMAP](../tutorials/MPEG_results/MPEG7_MO2GP_UMAP_device.png)
 ![MPEG7_device_UMAP_contour](../tutorials/MPEG_results/MPEG7_MO2GP_UMAP_device_contour.png)
 
-The UMAP embedding reveals that device4 and device8 are clustered together in the top-right quadrant due to their shared three-pointed or triangular-based geometry. In the bottom-right region, device3, device2, and device5 are grouped together because they all exhibit four-lobed or cross-like structures. Finally, device0 and device7 (rather than device 9) are positioned together in the top-left area because they both possess radial, star-like protrusions.
+The UMAP reveals that MO2GP is able to group device4 and device8 together in the top-right quadrant due to their shared three-pointed or triangular-based geometry. In the bottom-right region, device3, device2, and device5 are grouped together because they all exhibit four-lobed or cross-like structures. Finally, device0 and device7 (rather than device 9) are positioned together in the top-left area because they both possess star-like protrusions.
 
 ## 3C. MPEG7 dataset circle groups
 This subset of the MPEG-7 dataset consists of five shape categories that share a common circular base geometry: Apple, Device9, HCircle, Octopus, and Pocket.
@@ -558,3 +558,5 @@ plt.title(f'MPEG-7 Representative (curved) Contours\nSilhouette Index: {ss:.4f}'
 plt.show()
 ```
 ![MPEG7_curve_UMAP_contour](../tutorials/MPEG_results/MPEG7_MO2GP_UMAP_3specificgroups_curved_contour_representative.png)
+
+The UMAP demonstrates that the shape embedding successfully distinguishes between these three classes, despite their overall similarity as curvilinear forms. The horseshoe and sea_snake are positioned together on the right side of the plot because they both possess relatively smooth boundaries. In contrast, the lizard is isolated on the left due to the higher frequency variations introduced by its "leg" features. Both the sea_snake and lizard classes are split into two distinct sub-clusters, reflecting significant intra-group variance. For the sea snakes, this separation likely due to posture (such as "C-shapes" versus "candy cane" shapes), while the lizards are separated into 2 groups becauase of their "leg" and "tail" features.
