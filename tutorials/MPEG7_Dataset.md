@@ -278,6 +278,8 @@ plt.show()
 ![MPEG7_device_UMAP](../tutorials/MPEG_results/MPEG7_MO2GP_UMAP_device.png)
 ![MPEG7_device_UMAP_contour](../tutorials/MPEG_results/MPEG7_MO2GP_UMAP_device_contour.png)
 
+The UMAP embedding reveals that device4 and device8 are clustered together in the top-right quadrant due to their shared three-pointed or triangular-based geometry. In the bottom-right region, device3, device2, and device5 are grouped together because they all exhibit four-lobed or cross-like structures. Finally, device0 and device7 (rather than device 9) are positioned together in the top-left area because they both possess radial, star-like protrusions.
+
 ## 3C. MPEG7 dataset circle groups
 This subset of the MPEG-7 dataset consists of five shape categories that share a common circular base geometry: Apple, Device9, HCircle, Octopus, and Pocket.
 ### Load the file and visualize 
