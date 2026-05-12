@@ -4,8 +4,7 @@ Next, we used the widely recognized MPEG-7 Dataset. This dataset consists of 70 
 Reference:<br>
 https://dabi.temple.edu/external/shape/MPEG7/dataset.html<br>
 
-The raw images of MPEG dataset underwent an image preprocessing pipeline to extract the largest contour, following the same method used for Swedish Leaf dataset.<br>
-The contour and label files are available in `data` folder. 
+The raw images of MPEG dataset underwent an image preprocessing pipeline to extract the largest contour, following the same method used for Swedish Leaf dataset.The contour and label files are available in `data` folder. 
 
 In this tutorial, we will use a few subset of the MPEG-7 dataset, as visualizing all 70 shape categories simultaneously in a UMAP can be challenging to interpret.<br>
 ## 3a. MPEG7 dataset 15 shapes
@@ -22,7 +21,7 @@ labels = np.array(labels)
 img_input = np.load(r"User_Path\image_MPEG_15groups.npy")
 
 # Visualize the processed images 
-idx = np.arange(0, labels.shape[0], 20) # start= 0 from the first image,stop=labels.shape[0] = 1400 → go up to 1400 (not inclusive),step=20(pick every 20th image)
+idx = np.arange(0, labels.shape[0], 20)
 fig, ax = plt.subplots(ncols=5, nrows=4, figsize=(25,20))
 ax = ax.flatten()
 for i in range(len(idx)):
@@ -281,4 +280,94 @@ plt.show()
 
 ## 3C. MPEG7 dataset circle groups
 This subset of the MPEG-7 dataset consists of five shape categories that share a common circular base geometry: Apple, Device9, HCircle, Octopus, and Pocket.
+### Load the file and visualize 
+```python
+import pickle
 
+# Load files
+with open(r"User_Path\contour_MPEG_circle.pkl", 'rb') as f:
+    contour_input = pickle.load(f)
+with open(r"User_Path\label_MPEG_circle.pkl", 'rb') as f:
+    labels = pickle.load(f)
+labels = np.array(labels)
+img_input = np.load(r"User_Path\image_MPEG_circle.npy")
+
+# Visualize the processed images 
+idx = np.arange(0, labels.shape[0], 20) 
+fig, ax = plt.subplots(ncols=5, nrows=1, figsize=(20, 4))
+ax = ax.flatten()
+for i in range(len(idx)):
+    temp = img_input[idx[i]]
+    ax[i].imshow(temp)
+    ax[i].set_title(f"Image {i}")
+plt.tight_layout()
+plt.show()
+
+# Visualize the contour
+idx = np.arange(0, labels.shape[0], 20)
+fig, ax = plt.subplots(ncols=5, nrows=1, figsize=(20, 4))
+ax = ax.flatten()
+for i in range(len(idx)):
+    temp = contour_input[idx[i]]
+    ax[i].plot(temp[:, 0], temp[:, 1])
+    ax[i].invert_yaxis() 
+    ax[i].set_title(f"Contour {i}")
+plt.tight_layout()
+plt.show()
+```
+![MPEG7_circle_Image](../tutorials/MPEG_results/processed_images_MPEG7_device.png)
+![MPEG7_circle_Contour](../tutorials/MPEG_results/contour_MPEG7_device.png)
+
+### Run MO2GP analysis 
+```python
+model_align = ShapeAlign(contours=contour_input)
+model_align.preprocess_contours(num_workers=1, n_interp=250, n_smooth=0, scale='perimeter') 
+model_align.get_embedding(num_workers=1)
+
+shape_embedding = model_align.shape_embedding
+contours = model_align.contours
+descriptor = model_align.descriptor
+
+ss = silhouette_score(shape_embedding, labels, metric='euclidean')
+print(ss, shape_embedding.shape)
+```
+### UMAP Visualization
+```python
+# Define a list of 5 distinct colors 
+color_list = [
+    (0.788, 0.498, 0.498), # brown
+    (1.0, 0.647, 0.823),   # hotpink
+    (0.701, 0.4, 0.701),   # purple
+    (0.4, 0.701, 0.4),     # green
+    (1.0, 0.788, 0.4)     # orange
+]
+
+shapes=['apple','device9','HCircle','octopus','pocket']
+
+shape_color_dict = dict(zip(shapes, color_list))
+
+fit = umap.UMAP(random_state=19)
+embedding = fit.fit_transform(shape_embedding)
+
+for shape in np.unique(labels):
+    plt.scatter(
+        embedding[labels == shape, 0],
+        embedding[labels == shape, 1],
+        s=5,
+        c=shape_color_dict[shape],
+        label=shape
+    )
+
+legend_elements = [
+    Line2D([0], [0], color=color_list[i], lw=3, label=shapes[i])
+    for i in range(5)
+]
+
+plt.xlabel('UMAP1')
+plt.ylabel('UMAP2')
+plt.title(f'Subset of MPEG-7 Dataset UMAP circle, SI={ss:.4f}', fontweight='bold', fontsize=12)
+plt.legend(handles=legend_elements,loc='center left',bbox_to_anchor=(1.02, 0.5), fontsize=15)
+plt.show()
+```
+![MPEG7_circle_UMAP](../tutorials/MPEG_results/MPEG7_MO2GP_UMAP_circle.png)
+![MPEG7_circle_UMAP_Contour](../tutorials/MPEG_results/MPEG7_MO2GP_UMAP_circle_contour.png)
