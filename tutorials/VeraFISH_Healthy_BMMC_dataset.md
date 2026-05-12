@@ -480,28 +480,23 @@ down_gene = filtered_nb_df.loc[filtered_nb_df['bin_coeff'] < 0]
 import numpy as np
 import matplotlib.pyplot as plt
 
-# 1. Setup the figure
 fig, ax = plt.subplots(figsize=(12, 6))
 
-# 2. Plot background (non-significant) genes
+# Plot background (non-significant) genes
 ax.scatter(results_nb_df_2['bin_coeff'], -np.log10(results_nb_df_2['p_adj']), 
            s=20, c='grey', alpha=0.3, label='Not Significant')
 
-# 3. Plot Up and Down genes
+# Plot Up and Down genes
 ax.scatter(up_gene['bin_coeff'], -np.log10(up_gene['p_adj']), 
            s=25, c='red', label='Up-regulated')
 ax.scatter(down_gene['bin_coeff'], -np.log10(down_gene['p_adj']), 
            s=25, c='blue', label='Down-regulated')
 
-# --- UPDATED LABELING SECTION ---
-# Using 'gene' as the column name based on your print output
+
+# Using 'gene' as the column name 
 gene_col = 'gene' 
 
-# Label Up genes (Right side of the plot)
-# for i, row in up_gene.sort_values('p_adj').head(15).iterrows():
-#     ax.text(row['bin_coeff'] + 0.01, -np.log10(row['p_adj']), row[gene_col], 
-#             fontsize=10, va='center', ha='left')
-
+# Up regulated genes
 for i, (idx, row) in enumerate(up_gene.sort_values('p_adj').head(15).iterrows()):
     # If i is even, move up; if odd, move down
     v_offset = 0.2 if i % 2 == 0 else -0.2 
@@ -509,16 +504,14 @@ for i, (idx, row) in enumerate(up_gene.sort_values('p_adj').head(15).iterrows())
     ax.text(row['bin_coeff'] + 0.01, -np.log10(row['p_adj']) + v_offset, 
             row['gene'], fontsize=10, va='center', ha='left')
 
-#Label Down genes (Left side of the plot)
+# Down regulated genes
 for i, row in down_gene.sort_values('p_adj').head(15).iterrows():
     ax.text(row['bin_coeff'] - 0.01, -np.log10(row['p_adj']), row[gene_col], 
             fontsize=10, va='center', ha='right')
 
-# 6. Threshold lines
+# Threshold lines
 ax.vlines(x=[np.log2(1.1), -np.log2(1.1)], colors='k', ymin=0, ymax=16, linestyles='--')
 ax.hlines(y=1, colors='k', xmin=-0.8, xmax=0.4, linestyles='--')
-
-# 7. Labels and Limits
 ax.set_title('Healthy BMMC Shape Associated Genes', fontsize=25)
 ax.set_ylabel('-Log10(p_adj)', fontsize=18)
 ax.set_xlabel('log2_OddRatio', fontsize=18)
