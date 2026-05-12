@@ -4,7 +4,7 @@ Next, we used the widely recognized MPEG-7 Dataset. This dataset consists of 70 
 Reference:<br>
 https://dabi.temple.edu/external/shape/MPEG7/dataset.html<br>
 
-The raw images of MPEG dataset underwent an image preprocessing pipeline to extract the largest contour, following the same method used for Swedish Leaf dataset.The contour and label files are available in `data` folder. 
+The raw images of MPEG dataset underwent an image preprocessing pipeline to extract the largest contour, following the same method used for Swedish Leaf dataset.The contour,image, and label files are available in `data` folder. 
 
 In this tutorial, we will use a few subset of the MPEG-7 dataset, as visualizing all 70 shape categories simultaneously in a UMAP can be challenging to interpret.<br>
 ## 3a. MPEG7 dataset 15 shapes
