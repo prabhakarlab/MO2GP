@@ -1,14 +1,14 @@
 # 3. MPEG-7 Dataset 
-Next, we used the widely recognized MPEG-7 Dataset. This dataset consists of 70 basic shape categories, with 20 images per category, and is a standard benchmark for evaluating the performance of shape similarity methods.<br>
+Next, we utilized the widely recognized MPEG-7 Dataset.The dataset consists of 1,400 images across 70 fundamental shape categories (20 images per category) and is a standard benchmark for evaluating the performance of shape similarity methods.<br>
 
 Reference:<br>
 https://dabi.temple.edu/external/shape/MPEG7/dataset.html<br>
 
-The raw images of MPEG dataset underwent an image preprocessing pipeline to extract the largest contour, following the same method used for Swedish Leaf dataset. The contour,image, and label files are available in `data` folder. 
+The raw images of MPEG dataset underwent an image preprocessing pipeline to extract the largest contour, following the same method used for Swedish Leaf dataset. The preprocessed contour, image, and label files are available in `data` folder. 
 
-In this tutorial, we will use a few subset of the MPEG-7 dataset to showcase the MO2GP shape embedding analysis, as visualizing all 70 shape categories simultaneously in a UMAP can be challenging to interpret.<br>
+In this tutorial, we focused on a few subset of the MPEG-7 dataset to showcase the MO2GP shape embedding analysis. While the pipeline supports the full 70 shape category, visualizing a subset of the dataset ensures that the resulting UMAP clusters remain distinct and easy to analyze for the user.<br>
+
 ## 3a. MPEG7 dataset 15 shapes
-
 ### Load the contour file 
 ```python
 import pickle
