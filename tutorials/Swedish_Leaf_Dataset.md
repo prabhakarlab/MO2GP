@@ -6,7 +6,7 @@ Söderkvist, O. J. O. (2001). Computer vision classification of leaves from Swed
 
 ## Images Preprocessing <br>
 MO2GP utilizes the largest continuous contour from each object as the primary input. Therefore, preprocessing workflow is needed.<br>
-First, we need to extracts the largest external contour and generates a corresponding binary mask for each sample. These contours, along with their associated labels and processed images, are then stored for downstream shape embedding and analysis.<br>
+First, we need to extracts the largest external contour and generates a corresponding binary mask for each sample. These contours, along with their associated labels and processed images, are then stored for downstream shape embedding and analysis (available in `data` folder).<br>
 
 ```python
 from PIL import Image
@@ -15,6 +15,7 @@ import numpy as np
 import cv2
 import pickle
 
+# Custom function to get the image and contour 
 def get_image_and_contours(img_path, size=128, threshold=128, invert_background=False):
     try:
         # Open image and convert to grayscale
@@ -64,7 +65,6 @@ def get_image_and_contours(img_path, size=128, threshold=128, invert_background=
     
     return img_padded, largest_contour
 
-
 # Initialize data containers
 contour_input = []
 labels = []
@@ -98,7 +98,7 @@ for cur_folder in tqdm(folders, position=0, leave=True):
 #Finalize and Save Data
 img_input = np.array(img_input)
 
-# Open a file in "write binary" (wb) mode to save contour data
+# Open a file in "write binary"  mode to save contour data
 with open("User_Path\\contour_leaf.pkl", "wb") as f:
     pickle.dump(contour_input, f)
 
@@ -248,7 +248,7 @@ for idx in representative_indices:
                   [np.sin(theta),  np.cos(theta)]])
     contour = contour @ R.T
     # normalize contour size 
-    contour = contour / np.max(np.linalg.norm(contour, axis=1)) #optinonal step to make all the representative contour same size 
+    contour = contour / np.max(np.linalg.norm(contour, axis=1)) # to make all the representative contour same size 
     # scale
     contour = contour * scale
     # shift to UMAP position
@@ -281,7 +281,7 @@ plt.show()
 ```
 ![Leaf_UMAP_contour](../tutorials/Swedish_Leaf_data_results/Leafdata_UMAP_contour_clean.png)
 
-The UMAP visualization demonstrates that the shape embedding effectively separates leaf species based on their morphological complexity and boundary frequencies. Distinctive shapes, such as Acer (maple-like) and Sorbus aucuparia, are isolated on the left, while the elongated Salix alba Sericea is partitioned to the bottom right. Conversely, species with similar geometric profiles are clustered in close region, including the Sorbus intermedia/Quercus group and the Fagus silvatica/Salix cinerea pairing. Furthermore, a tight cluster formed by Salix aurita, Ulmus glabra, and Ulmus carpinifolia—along with four other species—highlight the MO2GP's ability to group leaves based on shared frequency details and overall contour signatures.
+The UMAP visualization demonstrates that the MO2GP effectively separates leaf species based on their morphological complexity and boundary frequencies. Distinctive shapes, such as Acer (maple-like) and Sorbus aucuparia, are isolated on the left, while the elongated Salix alba Sericea is partitioned to the bottom right. Conversely, leaf with similar shape profiles are clustered in close region, including the Sorbus intermedia/Quercus group and the Fagus silvatica/Salix cinerea pairing. Furthermore, a tight cluster formed by Salix aurita, Ulmus glabra, and Ulmus carpinifolia—along with four other species—highlight the MO2GP's ability to group leaves based on shared frequency details and overall contour signatures.
 
 # MO2GP Parameter Optimization
 In this tutorial, we adjusted MO2GP shape embedding parameter using the Swedish Leaf dataset. We evaluated values of **n_interp** ranging from 50 to 500, while using default parameter for other parameters, and the results are shown in the line graph. The silhouette index increased with larger **n_interp** values but reached a plateau at **n_interp** = 300. This indicates that increasing **n_interp** beyond this point does not lead to further improvement in clustering performance. Therefore, users should tune **n_interp** based on their specific dataset, as higher values do not necessarily correlate with a higher silhouette index. 
