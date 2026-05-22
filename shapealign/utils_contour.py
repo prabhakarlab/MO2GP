@@ -90,10 +90,11 @@ def cinterpolate(contour, n=100, coarse=True, spline=True):
         for i in range(1, n):
             valid_indices = np.where(orig <= targ[i])[0]
             k = valid_indices[-1] if len(valid_indices) > 0 else 0
-            if orig[k] == orig[k+1]:  # Prevent division by zero
+            segment_length = orig[k+1] - orig[k]
+            if segment_length < 1e-9: 
                 cout[i] = contour[k]
             else:
-                r = (targ[i] - orig[k]) / (orig[k+1] - orig[k])
+                r = (targ[i] - orig[k]) / segment_length
                 cout[i] = edi(contour[k % len(contour)], contour[(k+1) % len(contour)], r)
     else:
         cout = contour.copy()

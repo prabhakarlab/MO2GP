@@ -28,11 +28,13 @@ def area(mask):
     Returns:
         float: the area of the shape
     """
+    if mask is None or len(mask) < 3:
+        return 0.0
     return cv.contourArea(mask)
 
 def perimeter(mask):
     """
-    Computes perimeter of a shape defined by points in `mask`. 
+    Computes perimeter of a shape defined by points in `mask`.
     Args:
         mask (numpy.ndarray): array of size n x 2, where n is the number of points
             in the contour. The points are expected to be in order along the
@@ -40,11 +42,13 @@ def perimeter(mask):
     Returns:
         float: the perimeter of the shape
     """
+    if mask is None or len(mask) < 2:
+        return 0.0
     return cv.arcLength(mask, closed=True)
 
 def circularity(mask):
     """
-    Computes circularity of a shape defined by points in `mask`.    
+    Computes circularity of a shape defined by points in `mask`.
     Circularity is defined as (4 * pi * area / perimeter ** 2). 
     Also known as form factor.
     Args:
@@ -54,10 +58,14 @@ def circularity(mask):
     Returns:
         float: the circularity of the shape
     """
+    if mask is None or len(mask) < 3:
+        return np.nan
     perimeter = cv.arcLength(mask, closed=True)
     area = cv.contourArea(mask)
+    if perimeter == 0:
+        return np.nan
     return (4 * np.pi * area) / perimeter ** 2
-    
+
 def solidity(mask):
     """
     Computes solidity of a shape defined by points in `mask`.
@@ -70,11 +78,15 @@ def solidity(mask):
     Returns:
         float: the solidity of the shape
     """
+    if mask is None or len(mask) < 3:
+        return np.nan
     area = cv.contourArea(mask)
     hull = cv.convexHull(mask)
     convex_area = cv.contourArea(hull)
-    return area / convex_area    
-    
+    if convex_area == 0:
+        return np.nan
+    return area / convex_area
+
 def extent(mask):
     """
     Computes extent of a shape defined by points in `mask`.
@@ -85,11 +97,16 @@ def extent(mask):
             contour of the shape.
             
     Returns:
-        float: the roundness of the shape
+        float: the extent of the shape
     """
+    if mask is None or len(mask) < 3:
+        return np.nan
     area = cv.contourArea(mask)
     (_,_), (width, height), _ = cv.minAreaRect(mask)
-    return area / (width * height)
+    bounding_area = width * height
+    if bounding_area == 0:
+        return np.nan
+    return area / bounding_area
 
 def eccentricity(mask):
     """
@@ -102,10 +119,17 @@ def eccentricity(mask):
             
     Returns:
         float: the eccentricity of the shape
-    """    
-    (_, _), (minor_axis, major_axis), _ = cv.fitEllipse(mask)
-    return np.sqrt(1 - (minor_axis ** 2 / major_axis ** 2))
-       
+    """
+    if mask is None or len(mask) < 5:
+        return np.nan
+    try:
+        (_, _), (minor_axis, major_axis), _ = cv.fitEllipse(mask)
+        if major_axis == 0:
+            return np.nan
+        return np.sqrt(1 - (minor_axis ** 2 / major_axis ** 2))
+    except cv.error:
+        return np.nan
+
 def major_axis_length(mask):
     """
     Computes major axis length of a fitted ellipse to the shape defined by points in `mask`.
@@ -116,8 +140,13 @@ def major_axis_length(mask):
     Returns:
         float: the major axis length of the shape
     """
-    (_, _), (_, major_axis), _ = cv.fitEllipse(mask)
-    return major_axis 
+    if mask is None or len(mask) < 5:
+        return np.nan
+    try:
+        (_, _), (_, major_axis), _ = cv.fitEllipse(mask)
+        return major_axis
+    except cv.error:
+        return np.nan
 
 def minor_axis_length(mask):
     """
@@ -127,10 +156,15 @@ def minor_axis_length(mask):
             in the contour. The points are expected to be in order along the
             contour of the shape.
     Returns:
-        float: the major axis length of the shape
+        float: the minor axis length of the shape
     """
-    (_, _), (minor_axis, _), _ = cv.fitEllipse(mask)
-    return minor_axis 
+    if mask is None or len(mask) < 5:
+        return np.nan
+    try:
+        (_, _), (minor_axis, _), _ = cv.fitEllipse(mask)
+        return minor_axis
+    except cv.error:
+        return np.nan
 
 def max_feret_diameter(mask):
     """
@@ -142,6 +176,8 @@ def max_feret_diameter(mask):
     Returns:
         float: the max Feret diameter of the shape
     """
+    if mask is None or len(mask) < 2:
+        return np.nan
     (_, _), (width, height), _ = cv.minAreaRect(mask)
     return max(width, height)
 
@@ -155,8 +191,10 @@ def min_feret_diameter(mask):
     Returns:
         float: the min Feret diameter of the shape
     """
+    if mask is None or len(mask) < 2:
+        return np.nan
     (_, _), (width, height), _ = cv.minAreaRect(mask)
-    return min(width, height)   
+    return min(width, height)
 
 def equivalent_diameter(mask):
     """
@@ -168,7 +206,10 @@ def equivalent_diameter(mask):
     Returns:
         float: the equivalent diameter of the shape    
     """
-    return np.sqrt(cv.contourArea(mask) / np.pi)
+    if mask is None or len(mask) < 3:
+        return np.nan
+    area = cv.contourArea(mask)
+    return np.sqrt(4 * area / np.pi)
 
 def aspect_ratio(mask):
     """
@@ -182,9 +223,13 @@ def aspect_ratio(mask):
     Returns:
         float: the aspect ratio of the shape
     """
+    if mask is None or len(mask) < 2:
+        return np.nan
     (_, _), (width, height), _ = cv.minAreaRect(mask)
-    return max(width, height) / min(width, height)
-
+    min_dim = min(width, height)
+    if min_dim == 0:
+        return np.nan
+    return max(width, height) / min_dim
 
 def roundness(mask):
     """
@@ -199,7 +244,13 @@ def roundness(mask):
     Returns:
         float: the roundness of the shape
     """
-    area = cv.contourArea(mask)
-    (_, _), (_, major_axis), _ = cv.fitEllipse(mask)
-    return (4 * area) / (np.pi * major_axis ** 2)
-
+    if mask is None or len(mask) < 5:
+        return np.nan
+    try:
+        area = cv.contourArea(mask)
+        (_, _), (_, major_axis), _ = cv.fitEllipse(mask)
+        if major_axis == 0:
+            return np.nan
+        return (4 * area) / (np.pi * major_axis ** 2)
+    except cv.error:
+        return np.nan
