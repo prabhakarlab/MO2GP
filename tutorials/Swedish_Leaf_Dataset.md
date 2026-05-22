@@ -290,3 +290,8 @@ In this tutorial, we adjusted MO2GP shape embedding parameter using the Swedish 
 Additionally, we examined the impact of the **n_smooth** parameter by testing values ranging from 0 to 8 and evaluating the results using the Silhouette Index (SI). While we observed a slight downward trend in the SI as **n_smooth** increased, this decrease was not really significant. This indicates that for this leaf dataset, additional smoothing does not substantially improve clustering performance. Therefore, we have set the default value for **n_smooth** to 0 in this tutorial.
 
 ![n_smooth_plot](../tutorials/Swedish_Leaf_data_results/SI_n_smooth_plot_leaf.png)
+
+More detailed tutorials on additional datasets are available here:
+
+[Simulation_Dataset]((../README.md)) | [MPEG7 Dataset](./tutorials/MPEG7_Dataset.md) |
+[VeraFISH_Healthy_BMMC_Dataset](./tutorials/VeraFISH_Healthy_BMMC_dataset.md) 
