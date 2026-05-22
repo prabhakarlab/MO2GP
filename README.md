@@ -157,7 +157,6 @@ shape_color_dict = dict(zip(shapes, color_list))
 shape_color_dict
 
 fit = umap.UMAP(n_neighbors=50, min_dist=0.2, random_state=18)
-
 embedding = fit.fit_transform(shape_embedding)
 
 plt.figure(figsize=(12,8))
