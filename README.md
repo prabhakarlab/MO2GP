@@ -102,7 +102,6 @@ def silhouette_score(dataIn, labels, metric='euclidean'):
     unique_labels = np.unique(labels)
     group_means = np.array([output_sample[labels == label].mean(axis=0) for label in unique_labels])
     return np.mean(group_means)
-
 ss = silhouette_score(shape_embedding, labels, metric='euclidean')
 print(ss, shape_embedding.shape)
 ```
