@@ -562,5 +562,6 @@ plt.show()
 
 The UMAP demonstrates that the shape embedding successfully distinguishes between these three classes, despite their overall similarity as curvilinear forms. The horseshoe and sea_snake are positioned together on the right side of the plot because they both possess relatively smooth boundaries. In contrast, the lizard is isolated on the left due to the higher frequency variations introduced by its "leg" features. Both the sea_snake and lizard classes are split into two distinct sub-clusters, reflecting significant intra-group variance. For the sea snakes, this separation likely due to posture (such as "C-shapes" versus "candy cane" shapes), while the lizards are separated into 2 groups becauase of their "leg" and "tail" features.
 
-More detailed tutorials on additional datasets are available here:
+More detailed tutorials on additional datasets are available here:<br>
+
 [Simulation_Dataset](/README.md) |[Swedish Leaf Dataset](Swedish_Leaf_Dataset.md) | [VeraFISH_Healthy_BMMC_Dataset](VeraFISH_Healthy_BMMC_dataset.md) | 
