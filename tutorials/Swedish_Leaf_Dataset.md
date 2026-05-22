@@ -293,5 +293,5 @@ Additionally, we examined the impact of the **n_smooth** parameter by testing va
 
 More detailed tutorials on additional datasets are available here:
 
-[S_Dataset](/README.md) | [MPEG7 Dataset](./tutorials/MPEG7_Dataset.md) |
-[VeraFISH_Healthy_BMMC_Dataset](./tutorials/VeraFISH_Healthy_BMMC_dataset.md) 
+[Simulation_Dataset](/README.md) | [MPEG7 Dataset](MPEG7_Dataset.md) |
+[VeraFISH_Healthy_BMMC_Dataset](VeraFISH_Healthy_BMMC_dataset.md) 
