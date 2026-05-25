@@ -101,7 +101,7 @@ plt.show()
 ![Healthy_BMMC_UMAP](../tutorials/VeraFISH_Healthy_BMMC_results/UMAP_BMMC_monocytes_DPT_aspect_ratio.png)
 
 To quantify morpholgical trajectory, we computed shape-based Diffusion Pseudotime (sDPT)for each cells (graph-based distance from the round nucleus) and then followed by normalization step.
-As shown in the UMAP, the round nucleus was assigned to a sDPT=0 and the most irregular nucleus was assigned to sDPT=1. 
+As shown in the UMAP, the round nucleus was assigned to a sDPT=0 (aspect ratio ~ 1) and the most irregular nucleus was assigned to sDPT=1. 
 
 
 ## Visualize the contour representative 
