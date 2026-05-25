@@ -166,9 +166,12 @@ plt.tight_layout()
 plt.show()
 ```
 ![Healthy_BMMC_UMAP_contour](../tutorials/VeraFISH_Healthy_BMMC_results/UMAP_BMMC_monocytes_contour.png)
-The UMAP reveals a trajectory or continuum of Healthy BMMC monocytes nuclear shapes ranging from round to elongated, which aligns well with the differentiation axis of the Myeloid cells. Nuclear cells with a low aspect ratio (more round or stem-like) are enriched on the left side of the UMAP, while cells with a high aspect ratio are enriched on the right side, corresponding to more differentiated, elongated shapes. This demonstrates the ability of MO2GP to interpret spatial transcriptomic data by integrating morphological and transcriptional information.
+The UMAP reveals a trajectory or continuum of Healthy BMMC monocytes nuclear shapes ranging from round to elongated. Nuclear cells with a low aspect ratio (more round) are enriched on the left side of the UMAP, while cells with a high aspect ratio are enriched on the right side, more elongated shapes. 
 
 ## Custom function to calculate the Enrichment (Ratio of Fold)
+To quantify the association between nuclear shape and cell state, we computed a local enrichment etric in the shape embedding space using a custom function below. 
+Within each neighborhood, we calculated an enrichment score for a target/interest population  relative to a reference population (Classical Monocytes).
+
 ```python
 from collections import Counter
 def calculate_and_plot_enrichment_RatioOfFolds(
@@ -300,6 +303,7 @@ def calculate_and_plot_enrichment_RatioOfFolds(
 ```
 
 ## Local Enrichment using 1000 neighbors
+For each cell, a local neigborhood was determine using k-nearest neighbors(k=1000) 
 ```python
 dims = sdata.obsm['X_pca'].shape[1]
 scanpy.pp.neighbors(
