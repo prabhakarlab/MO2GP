@@ -99,6 +99,11 @@ plt.tight_layout()
 plt.show()
 ```
 ![Healthy_BMMC_UMAP](../tutorials/VeraFISH_Healthy_BMMC_results/UMAP_BMMC_monocytes_DPT_aspect_ratio.png)
+
+To quantify morpholgical trajectory, we computed shape-based Diffusion Pseudotime (sDPT)for each cells (graph-based distance from the round nucleus) and then followed by normalization step.
+As shown in the UMAP, the round nucleus was assigned to a sDPT=0 and the most irregular nucleus was assigned to sDPT=1. 
+
+
 ## Visualize the contour representative 
 ```python
 from sklearn.cluster import KMeans
@@ -473,6 +478,8 @@ table.scale(1.5, 2.5) # (width, height) -
 plt.show()
 ```
 ![DE_Genes_Table](../tutorials/VeraFISH_Healthy_BMMC_results/DE_genes_Healthy_BMMC_table.png)
+The table shows result from morphological trajectory analysis, 7 genes are identified positively correlated with sDPT. Among those 7 genes, 3 genes are widely known as marker for monocytes maturation :CD14, CD300E, and ITGAX. Additionally, the result also shows 4 negatively correlated with sDPT (EGR1, S100A9,LYZ, and SPN) which also markers for immature cells. 
+
 ## Visualize the DE Genes using Volcano Plot 
 ```python
 results_nb_df_2 = results_nb_df[results_nb_df['mean_exp'] > 0.05]
@@ -525,6 +532,7 @@ plt.tight_layout()
 plt.show()
 ```
 ![DE_Genes_Volcano_Plot](../tutorials/VeraFISH_Healthy_BMMC_results/DE_genes_Healthy_BMMC_Shape_plot.png)
+
 
 More detailed tutorials on additional datasets are available here:
 
