@@ -537,6 +537,7 @@ plt.show()
 ```
 ![DE_Genes_Volcano_Plot](../tutorials/VeraFISH_Healthy_BMMC_results/DE_genes_Healthy_BMMC_Shape_plot.png)
 
+The table and Volcano Plot show result from morphological trajectory analysis, 7 genes are identified positively correlated with sDPT. Among those 7 genes, 3 genes are widely known as marker for monocytes maturation :CD14, CD300E, and ITGAX. Additionally, the result also shows 4 negatively correlated with sDPT (EGR1, S100A9,LYZ, and SPN) which also markers for immature cells. 
 
 More detailed tutorials on additional datasets are available here:
 
