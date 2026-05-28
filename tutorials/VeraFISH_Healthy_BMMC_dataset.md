@@ -346,6 +346,8 @@ plt.show()
 As shown in the figure, there are four UMAPs representing the Myeloid lineage cell types. The enrichment score for each cell type was calculated using classical monocytes as the reference population. The Progenitor, Cycling, and cDC2 cells were mostly enriched on the right side of the UMAP. On the other hand, Non-classical Monocytes which is the most differentiated cell in myeloid lineage was enriched on the left side of the UMAP. 
 
 ## Shape Associated DE Genes analysis 
+To identify genes associated with the trajectory of morphology axis, sDPT were divided into 20 bins. To reduce the effect of outliers, the bins were allocated as follows: the first bin captured data below the 5th percentile, followed by 18 equally spaced bins spanning the 5th to 95th percentiles, and the final bin captured data above the 95th percentile.
+
 ```python
 import statsmodels.api as sm
 import statsmodels.formula.api as smf
