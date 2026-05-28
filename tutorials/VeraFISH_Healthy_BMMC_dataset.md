@@ -42,8 +42,8 @@ sc.pp.neighbors(adata, n_neighbors=30, n_pcs=10)
 ## Run MO2GP analysis
 ```python
 model_align = ShapeAlign(contours = contours_input)
-model_align.preprocess_contours(num_workers=1, n_interp=250, n_smooth=0, scale='perimeter') # 'perimeter'
-model_align.get_embedding(num_workers=1) #pcs=None, get_descriptor=True, kernel=1
+model_align.preprocess_contours(num_workers=1, n_interp=250, n_smooth=0, scale='perimeter') 
+model_align.get_embedding(num_workers=1) 
 
 shape_embedding = model_align.shape_embedding
 contours = model_align.contours
@@ -169,7 +169,7 @@ plt.show()
 The UMAP reveals a trajectory or continuum of Healthy BMMC monocytes nuclear shapes ranging from round to elongated. Nuclear cells with a low aspect ratio (more round) are enriched on the left side of the UMAP, while cells with a high aspect ratio are enriched on the right side, more elongated shapes. 
 
 ## Custom function to calculate the Enrichment (Ratio of Fold)
-To quantify the association between nuclear shape and cell state, we computed a local enrichment etric in the shape embedding space using a custom function below. 
+To quantify the association between nuclear shape and cell state, we computed a local enrichment metric in the shape embedding space using a custom function below. 
 Within each neighborhood, we calculated an enrichment score for a target/interest population  relative to a reference population (Classical Monocytes).
 
 ```python
@@ -343,6 +343,7 @@ plt.tight_layout()
 plt.show()
 ```
 ![Celltype_Enrichment_Plot](../tutorials/VeraFISH_Healthy_BMMC_results/Celltype_shape_enrichment_plot.png)
+As shown in the figure, there are four UMAPs representing the Myeloid lineage cell types. The enrichment score for each cell type was calculated using classical monocytes as the reference population. The Progenitor, Cycling, and cDC2 cells were mostly enriched on the right side of the UMAP. On the other hand, Non-classical Monocytes which is the most differentiated cell in myeloid lineage was enriched on the left side of the UMAP. 
 
 ## Shape Associated DE Genes analysis 
 ```python
