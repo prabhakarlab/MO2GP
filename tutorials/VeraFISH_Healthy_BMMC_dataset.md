@@ -351,7 +351,7 @@ import statsmodels.api as sm
 import statsmodels.formula.api as smf
 from tqdm import tqdm
 
-# --- Step 1: Filter data (your original code) ---
+# --- Step 1: Filter data ---
 sdata_s = sdata.copy()
 adata_s = adata.copy()
 print(sdata_s.shape, adata_s.shape)
@@ -359,7 +359,7 @@ print(sdata_s.shape, adata_s.shape)
 # Filter genes to speed up the process
 scanpy.pp.filter_genes(adata_s, min_cells=0.05 * adata_s.n_obs)
 
-# --- Step 2: Bin Pseudotime (Your Code) ---
+# --- Step 2: Bin Pseudotime  ---
 dpt_pseudotime = sdata_s.obs['dpt_pseudotime']
 cell = sdata_s.uns['iroot']
 ## Bin the data
@@ -506,15 +506,13 @@ ax.scatter(up_gene['bin_coeff'], -np.log10(up_gene['p_adj']),
 ax.scatter(down_gene['bin_coeff'], -np.log10(down_gene['p_adj']), 
            s=25, c='blue', label='Down-regulated')
 
-
 # Using 'gene' as the column name 
 gene_col = 'gene' 
 
 # Up regulated genes
 for i, (idx, row) in enumerate(up_gene.sort_values('p_adj').head(15).iterrows()):
     # If i is even, move up; if odd, move down
-    v_offset = 0.2 if i % 2 == 0 else -0.2 
-    
+    v_offset = 0.2 if i % 2 == 0 else -0.2   
     ax.text(row['bin_coeff'] + 0.01, -np.log10(row['p_adj']) + v_offset, 
             row['gene'], fontsize=10, va='center', ha='left')
 
