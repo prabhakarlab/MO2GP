@@ -6,7 +6,6 @@ represented as ordered point arrays (e.g., from OpenCV contours).
 
 Each function computes a specific descriptor that quantifies geometric or
 shape properties, typically for use in downstream shape analysis or machine learning.
-
 All inputs are assumed to be NumPy arrays of shape (n_points, 2).
 """
 
