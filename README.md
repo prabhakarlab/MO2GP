@@ -45,21 +45,19 @@ To demonstrate the functionalities of MO2GP, in this tutorial we utilize one sim
 **4. VeraFISH Healthy BMMC dataset**<br>
 
 # 1. Simulation dataset
-First, we validated the MO2GP shape embedding using a synthetic dataset of 2,160 simulated shapes. This dataset consist of 18 distinct geometric categories derived from nine fundamental shapes—circle, ellipse, triangle, square, clover, pentagon, hexagon, boomerang, and nephroid—each generated at two aspect ratios (1 and 2). We also introduced noise to the contours and further expanded by subjecting each base shape to four orientation conditions: original, random rotation, vertical flip, and combined rotation with flipping.<br>
+First, we validated the MO2GP shape embedding using a synthetic dataset of 2,880 simulated shapes. This dataset consist of 24 distinct geometric categories derived from twelve shapes —circle,triangle, square, clover, star/pentagon, hexagon, boomerang, nephroid, echinocyte, dendritic cell, apoptotic cell —each generated at two aspect ratios (1 and 2). We also introduced noise to the contours and further expanded by subjecting each base shape to four orientation conditions: original, random rotation, vertical flip, and combined rotation with flipping.<br>
 
-For each sample in the datasets, we extracted the largest continuous contour corresponding to the outer boundary of the object.Each selected contour was subsequently converted into a binary mask and saved as a `contour.pkl` file as the input for MO2GP shape analysis. The contour file(`contour_simulation_list_18groups_2160.pkl`) and the label file (`label_simulation_list_18groups_2160.pkl`) are available in `data` folder. <br>
+For each sample in the datasets, we extracted the largest continuous contour corresponding to the outer boundary of the object.Each selected contour was subsequently converted into a binary mask and saved as a `contour.pkl` file as the input for MO2GP shape analysis. The contour file(`contour_simulation_list_18groups_2880.pkl`) and the label file (`label_simulation_list_18groups_2880.npy`) are available in `data` folder. <br>
 
 ### Load the file 
 ```python
 # Load the contour file 
-with open("User_Path\\contour_simulation_list_18groups_2160.pkl", "rb") as f:
+with open("User_Path\\contour_simulation_list_18groups_2880.pkl", "rb") as f:
     contour_input = pickle.load(f)
-with open("User_Path\\label_simulation_list_18groups_2160.pkl","rb") as f:
-    labels = pickle.load(f)
-labels = np.array(labels)
+labels = np.load("User_Path\\label_simulation_list_18groups_2880.npy")
 ```
-#### Contour of 18 simulated shapes
-![Simulated_data_Contour](./tutorials/Simulation_results/simulation_ist_18groups_2160_contours.png)
+#### Contour of 24 simulated shapes
+![Simulated_data_Contour](./tutorials/Simulation_results/Simulation_MO2GP_contour.png)
 
 ### Run MO2GP analysis 
 This step is where the MO2GP takes place. MO2GP Shape embedding uses the **ShapeAlign** class, which preprocess the raw shape outlines (contours) and performs advanced shape analysis using Fourier transforms and dimensionality reduction.<br>
@@ -108,54 +106,52 @@ print(ss, shape_embedding.shape)
 
 ### Visualize the UMAP
 ```python
+
 color_list = [
-    (0.788, 0.498, 0.498), # brown
-    (0, 0, 0),             # black
-    (1.0, 0.647, 0.823),   # hotpink
-    (0.701, 0.4, 0.701),   # purple
-    (0.4, 0.4, 1.0),       # blue
-    (0.4, 0.701, 0.4),     # green
-    (0.456, 0.632, 0.779), # steel blue
-    (1.0, 0.788, 0.4),     # orange
-    (1.0, 0.4, 0.4),       # red
-    (0.6, 0.4, 0.2),       # dark brown
-    (0.5, 0.5, 0.5),       # gray
-    (0.8, 0.8, 0.0),       # yellow
-    (0.5, 0.0, 0.5),       # dark purple
-    (0.0, 0.6, 0.6),       # teal
-    (1.0, 0.6, 0.0),       # dark orange
-    (0.489, 1.0, 0.0),     # lime green
-    (0.5, 0.0, 0.0),       # maroon
-    (0.824, 0.706, 0.549), # tan
-    (0.25, 0.88, 0.82),    # turquoise
-    (0.5, 0.5, 0.0)        # olive
+(0, 0, 0), # black
+(0.788, 0.498, 0.498), # brown
+(1.0, 0.647, 0.823), # hotpink
+(0.701, 0.4, 0.701), # purple
+(0.4, 0.4, 1.0), # blue
+(0.4, 0.701, 0.4), # green
+(0.456, 0.632, 0.779), #steel blue
+(1.0, 0.788, 0.4), # orange
+(1.0, 0.4, 0.4), # red
+(0.0, 0.502, 0.502), # teal (for crenated circle)
+(0.85, 0.15, 0.55), # deep magenta (for echinocyte)
+(0.0, 0.8, 0.8), # bright cyan/teal (for dendritic cell)
+(0.65, 0.85, 0.1) # chartreuse/lime yellow (for apoptotic cell)
 ]
+
+def pastel(color, factor=0.5):
+    # Mixes the color with white (1.0, 1.0, 1.0) based on the factor
+    return tuple(1 - factor * (1 - c) for c in color)
+
+color_pastel_list = [pastel(color, 0.4) for color in color_list]
 
 shapes = [
-    'boomerang', 
-    'boomerang aspect', 
-    'circle', 
-    'circle aspect', 
-    'clover', 
-    'clover aspect', 
-    'hexagon', 
-    'hexagon aspect', 
-    'nephroid', 
-    'nephroid aspect', 
-    'pentagon', 
-    'pentagon aspect', 
-    'square', 
-    'square aspect', 
-    'star', 
-    'star aspect', 
-    'triangle', 
-    'triangle aspect'
+       "circle",
+       "triangle",
+       "square",
+       "clover",
+       "pentagon",
+       "star",
+       "hexagon",
+       "boomerang",
+       "nephroid",
+       "echinocyte",
+       "dendritic cell",
+       "apoptotic cell"
 ]
 
+shapes_with_aspect = [shape + " aspect" for shape in shapes]
+
 shape_color_dict = dict(zip(shapes, color_list))
+shape_color_dict_2 = dict(zip(shapes_with_aspect, color_pastel_list))
+shape_color_dict.update(shape_color_dict_2)
 shape_color_dict
 
-fit = umap.UMAP(n_neighbors=50, min_dist=0.2, random_state=18)
+fit = umap.UMAP()
 embedding = fit.fit_transform(shape_embedding)
 
 plt.figure(figsize=(12,8))
