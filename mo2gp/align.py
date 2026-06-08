@@ -167,12 +167,12 @@ class ShapeAlign:
             Select the most relevant features of scaled_mft. 
             'variance' : Selects coefficients with variance above a threshold.
             'mean'     : Selects coefficients with a mean value above a threshold.
-            Defaults to 'variance'.          
+            Default is 'variance'.          
         thrs : float 
             Threshold for the 'feature_select'. 
             Default is None (0.01 for 'variance' and 0.05 or 'mean).
         pcs : int
-            Number of principal components to retain. Defaults to 10.
+            Number of principal components to retain. Defaults is 10.
         **args : dict
             Additional keyword arguments (e.g., specific descriptors).
         """
