@@ -47,7 +47,7 @@ To demonstrate the functionalities of MO2GP, in this tutorial we utilize one sim
 # 1. Simulation dataset
 First, we validated the MO2GP shape embedding using a synthetic dataset of 2,880 simulated shapes. This dataset consist of 12 distinct geometric categories derived from twelve shapes —circle,triangle, square, clover, pentagon, star, hexagon, boomerang, nephroid, echinocyte, dendritic cell, apoptotic cell —each generated at two aspect ratios (1 and 2). We also introduced noise to the contours and further expanded by subjecting each base shape to four orientation conditions: original, random rotation, vertical flip, and combined rotation with flipping.<br>
 
-For each sample in the datasets, we extracted the largest continuous contour corresponding to the outer boundary of the object.Each selected contour was subsequently converted into a binary mask and saved as a `contour.pkl` file as the input for MO2GP shape analysis. The contour file(`contour_simulation_list_18groups_2880.pkl`) and the label file (`label_simulation_list_18groups_2880.npy`) are available in `data` folder. <br>
+For each sample in the datasets, we extracted the largest continuous contour corresponding to the outer boundary of the object.Each selected contour was subsequently converted into a binary mask and saved as a `contour.pkl` file as the input for MO2GP shape analysis. The contour file(`**contour_simulation_list_18groups_2880.pkl**`) and the label file (`**label_simulation_list_18groups_2880.npy**`) are available in `data` folder. <br>
 
 ### Load the file 
 ```python
@@ -82,11 +82,11 @@ Next, **get_embedding** is used to compute shape embeddings from the preprocesse
 5. Applying PCA for dimensionality reduction<br>
 
 The parameter in **get_embedding** steps including : <br>
-1. get_descriptor (Default =True) <br>
-2. kernel (Default=1) <br>
-3. feature_select (Default='variance')<br>
-4. thrs (Defaults =None)<br>
-5. pcs  (Defaults =None)<br>
+1. get_descriptor : If True, also computes and stores simple morphological descriptors (Default =True) <br>
+2. kernel         : Default=1 <br>
+3. feature_select : (Default='variance')<br>
+4. thrs           : The threshold for the `feature_select`method (Defaults =None)<br>
+5. pcs            : The final number of pcs (Defaults =None)<br>
 
 Finally, the quality of the shape embeddings is evaluated using a modified silhouette score where we first find the average score for each specific group, then final silhouette score
 was then determined by taking the average of these per group means.
