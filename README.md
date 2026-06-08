@@ -45,7 +45,7 @@ To demonstrate the functionalities of MO2GP, in this tutorial we utilize one sim
 **4. VeraFISH Healthy BMMC dataset**<br>
 
 # 1. Simulation dataset
-First, we validated the MO2GP shape embedding using a synthetic dataset of 2,880 simulated shapes. This dataset consist of 24 distinct geometric categories derived from twelve shapes —circle,triangle, square, clover, star/pentagon, hexagon, boomerang, nephroid, echinocyte, dendritic cell, apoptotic cell —each generated at two aspect ratios (1 and 2). We also introduced noise to the contours and further expanded by subjecting each base shape to four orientation conditions: original, random rotation, vertical flip, and combined rotation with flipping.<br>
+First, we validated the MO2GP shape embedding using a synthetic dataset of 2,880 simulated shapes. This dataset consist of 12 distinct geometric categories derived from twelve shapes —circle,triangle, square, clover, pentagon, star, hexagon, boomerang, nephroid, echinocyte, dendritic cell, apoptotic cell —each generated at two aspect ratios (1 and 2). We also introduced noise to the contours and further expanded by subjecting each base shape to four orientation conditions: original, random rotation, vertical flip, and combined rotation with flipping.<br>
 
 For each sample in the datasets, we extracted the largest continuous contour corresponding to the outer boundary of the object.Each selected contour was subsequently converted into a binary mask and saved as a `contour.pkl` file as the input for MO2GP shape analysis. The contour file(`contour_simulation_list_18groups_2880.pkl`) and the label file (`label_simulation_list_18groups_2880.npy`) are available in `data` folder. <br>
 
