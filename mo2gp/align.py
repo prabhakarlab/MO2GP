@@ -172,7 +172,7 @@ class ShapeAlign:
             Threshold for the 'feature_select'. 
             Default is None (0.01 for 'variance' and 0.05 or 'mean).
         pcs : int
-            Number of principal components to retain. Defaults is 10.
+            Number of principal components to retain. Default is None.
         **args : dict
             Additional keyword arguments (e.g., specific descriptors).
         """
