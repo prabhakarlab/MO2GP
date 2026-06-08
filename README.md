@@ -57,7 +57,7 @@ with open("User_Path\\contour_simulation_list_18groups_2880.pkl", "rb") as f:
 labels = np.load("User_Path\\label_simulation_list_18groups_2880.npy")
 ```
 #### Contour of 24 simulated shapes
-![Simulated_data_Contour](./tutorials/Simulation_results/Simulation_MO2GP_contour.png)
+![Simulated_data_Contour](./tutorials/Simulation_data_results/Simulation_MO2GP_contour.png)
 
 ### Run MO2GP analysis 
 This step is where the MO2GP takes place. MO2GP Shape embedding uses the **ShapeAlign** class, which preprocess the raw shape outlines (contours) and performs advanced shape analysis using Fourier transforms and dimensionality reduction.<br>
@@ -170,7 +170,7 @@ plt.legend(title='Shapes', loc='center left', bbox_to_anchor=(1, 0.5), fontsize=
 plt.title(f'MO2GP Simulation Data, SI={ss:.4f}',fontsize=16)
 plt.show()
 ```
-![Simulated_data_Contour](./tutorials/Simulation_results/Simulation_data_UMAP.png)
+![Simulated_data_Contour](./tutorials/Simulation_data_results/Simulation_MO2GP_UMAP.png)
 
 More detailed tutorials on additional datasets are available here:
 
