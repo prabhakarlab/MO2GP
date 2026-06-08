@@ -82,11 +82,11 @@ Next, **get_embedding** is used to compute shape embeddings from the preprocesse
 5. Applying PCA for dimensionality reduction<br>
 
 The parameter in **get_embedding** steps including : <br>
-1. get_descriptor : If True, also computes and stores simple morphological descriptors (Default =True) <br>
-2. kernel         : Default=1 <br>
-3. feature_select : (Default='variance')<br>
-4. thrs           : The threshold for the `feature_select`method (Defaults =None)<br>
-5. pcs            : The final number of pcs (Defaults =None)<br>
+1. *get_descriptor* :  Whether to compute shape descriptors. Default is True. <br>
+2. *kernel*         : Default is 1. <br>
+3. *feature_select* : Select the most relevant features {variance/mean}. Default is variance. <br>
+4. *thrs*           : Threshold for the **feature_select** method. Defaults is None. <br>
+5. *pcs*            : Number of principal components to retain. Defaults is None. <br>
 
 Finally, the quality of the shape embeddings is evaluated using a modified silhouette score where we first find the average score for each specific group, then final silhouette score
 was then determined by taking the average of these per group means.
