@@ -15,16 +15,21 @@ class ShapeAlign:
     -----------
     raw_contours : list
         A list of raw input contours as numpy arrays.
+    N = len (contours) 
+        Total number of contours.
     contours : list
         Processed contours after interpolation and smoothing.
     dft : np.ndarray
         Discrete Fourier Transform (DFT) representation of contours.
-    selected_mft : np.ndarray
-        Selected Weighted Fourier Magnitude Features.
+    scaled_mft : np.ndarray
+        Magnitude-scaled feature representation of each contours.
+    selected_features :np.ndarray
+        Retrieves the specific feature from scaled_mftbased on the indices defined in idx.
     shape_embedding : np.ndarray
         Principal Component Analysis (PCA) embeddings of shape descriptors.
     descriptor : np.ndarray
         Computed shape descriptors.
+    
     """
 
     def __init__(self, contours):
@@ -156,6 +161,12 @@ class ShapeAlign:
         -----------
         get_descriptor : bool
             Whether to compute shape descriptors. Defaults to True.
+        kernel : int
+            Defaults to 1.
+        feature_select :
+            Select the most relevant features of scaled_mft. Defaults to 'variance'.
+        thrs :
+            Defaults to 'None'.
         pcs : int
             Number of principal components to retain. Defaults to 10.
         **args : dict
