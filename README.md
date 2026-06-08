@@ -61,13 +61,14 @@ labels = np.load("User_Path\\label_simulation_list_18groups_2880.npy")
 
 ### Run MO2GP analysis 
 This step is where the MO2GP takes place. MO2GP Shape embedding uses the **ShapeAlign** class, which preprocess the raw shape outlines (contours) and performs advanced shape analysis using Fourier transforms and dimensionality reduction.<br>
-First, the **preprocess_contours** step is a method to standardize all the contours to ensure all the contours are comparable. It processes the raw contours by centering, orientation (ensure the contour has clockwise orientation and is closed), interpoiation, smoothing (applies forward-backward smoothing to the contour), and normalize the contour. 
+First step is to compute shape descriptors for each contour into input list. The shape descriptors included aspect ratio, circularity, eccentricity, extent, roundness, solidity, and area. <br>
+Next is the **preprocess_contours**, a method to standardize all the contours to ensure all the contours are comparable. It processes the raw contours by centering, orientation (ensure the contour has clockwise orientation and is closed), interpolation, smoothing , and normalize the contour. 
 
 The **preprocess_contours** step also has provided parameters, including **num_workers**, **n_interp**, **n_smooth**, and **scale**: <br>
 • **n_interp**<br>
 The number of points to interpolate for each contour, resulting in contours of uniform size. The default is 250.<br>
 • **n_smooth**<br>
-The number of smoothing iterations to apply. The default is 0, meaning no smoothing is applied. Smoothing can be useful for some datasets, as it reduces noise and small irregularities and makes the overall shape easier to interpret.<br>
+The number of smoothing iterations to apply. The default is 0, meaning no smoothing is applied.<br>
 • **scale**<br>
 The method for scaling the contours to make them size-invariant. Currently only can use perimeter or area. The default is perimeter.<br>
 • **num_workers**<br>
@@ -79,6 +80,13 @@ Next, **get_embedding** is used to compute shape embeddings from the preprocesse
 3. Scalling Fourier coefficients which is analogously to the Sobolev H2 metric to emphasize certain frequencies and making the features more robust (a form of normalization to improve PCA results)<br>
 4. Feature Selection (keep the most informative features)<br>
 5. Applying PCA for dimensionality reduction<br>
+
+The parameter in **get_embedding** steps including : <br>
+1. get_descriptor (Default =True) <br>
+2. kernel (Default=1) <br>
+3. feature_select (Default='variance')<br>
+4. thrs (Defaults =None)<br>
+5. pcs  (Defaults =None)<br>
 
 Finally, the quality of the shape embeddings is evaluated using a modified silhouette score where we first find the average score for each specific group, then final silhouette score
 was then determined by taking the average of these per group means.
