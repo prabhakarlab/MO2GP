@@ -15,10 +15,10 @@ class ShapeAlign:
     -----------
     raw_contours : list
         A list of raw input contours as numpy arrays.
-    N = len (contours) 
+    N : int 
         Total number of contours.
     contours : list
-        Processed contours after interpolation and smoothing.
+        Processed contours after interpolation and normalization.
     dft : np.ndarray
         Discrete Fourier Transform (DFT) representation of contours.
     scaled_mft : np.ndarray
@@ -160,13 +160,17 @@ class ShapeAlign:
         Parameters:
         -----------
         get_descriptor : bool
-            Whether to compute shape descriptors. Defaults to True.
+            Whether to compute shape descriptors. Default is True.
         kernel : int
-            Defaults to 1.
-        feature_select :
-            Select the most relevant features of scaled_mft. Defaults to 'variance'.
-        thrs :
-            Defaults to 'None'.
+            Default is 1.
+        feature_select : {'variance', 'mean'}
+            Select the most relevant features of scaled_mft. 
+            'variance' : Selects coefficients with variance above a threshold.
+            'mean'     : Selects coefficients with a mean value above a threshold.
+            Defaults to 'variance'.          
+        thrs : float 
+            Threshold for the 'feature_select'. 
+            Default is None (0.01 for 'variance' and 0.05 or 'mean).
         pcs : int
             Number of principal components to retain. Defaults to 10.
         **args : dict
