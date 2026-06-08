@@ -110,12 +110,12 @@ class ShapeAlign:
         num_workers=1
     ):
         """
-        Preprocesses raw contours by interpolating and smoothing them.
+        Preprocesses raw contours by interpolating.
     
         Parameters:
         -----------
         n_interp : int
-            Number of points to interpolate each contour to. [Default = 100].
+            Number of points to interpolate each contour to. [Default = 250].
         n_smooth : int
             Number of times to apply smoothing. 0 means no smoothing. [Default = 0]. 
         scale : str
@@ -142,13 +142,11 @@ class ShapeAlign:
     
     def get_embedding(
         self, 
-        num_workers=1, 
-        show_progress=False,
-        pcs=None,
         get_descriptor=True,
         kernel=1,
         feature_select='variance',
         thrs=None,
+        pcs=None,
         **args
     ):
         """
@@ -156,14 +154,10 @@ class ShapeAlign:
 
         Parameters:
         -----------
-        num_workers : int
-            Number of parallel workers. Defaults to 1.
-        show_progress : bool
-            Whether to show a progress bar. Defaults to False.
-        pcs : int
-            Number of principal components to retain. Defaults to 10.
         get_descriptor : bool
             Whether to compute shape descriptors. Defaults to True.
+        pcs : int
+            Number of principal components to retain. Defaults to 10.
         **args : dict
             Additional keyword arguments (e.g., specific descriptors).
         """
@@ -192,7 +186,6 @@ class ShapeAlign:
             W = 2 * 1j * np.sin(A)
         elif kernel == 4:
             # kernel = [1, -1]
-            # W = 1 - np.cos(A) + 1j * np.sin(A)
             W = np.cos(A) - 1 + 1j * np.sin(A)
         else:
             raise ValueError("Error: Only values [1, 2, 3, 4] are accepted for kernel.")
