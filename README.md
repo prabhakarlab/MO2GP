@@ -27,7 +27,7 @@ pip install -e .
 
 ### **The test after installation**
 ```bash
-from shapealign import ShapeAlign  
+from mo2gp import ShapeAlign  
 
 import numpy as np
 
