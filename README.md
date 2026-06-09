@@ -5,18 +5,18 @@
 
 You can install **MO2GP** either directly from GitHub or by cloning the repository for development.
 
-### **Option 1 — Install Directly from GitHub**
+### Option 1 — Install Directly from GitHub
+
 Use `pip` to install the latest version from the `main` branch:
 
 ```bash
-pip install git+[https://github.com/Ijoanito/MO2GP.git](https://github.com/Ijoanito/MO2GP.git)
+pip install git+https://github.com/Ijoanito/MO2GP.git
 ```
 
 ### **Option 2 — Editable Install (Development Mode)**
-
 ```bash
 # Clone the repository
-git clone [https://github.com/Ijoanito/MO2GP.git](https://github.com/Ijoanito/MO2GP.git)
+git clone https://github.com/Ijoanito/MO2GP.git
 
 # Enter the project directory
 cd MO2GP
@@ -74,7 +74,7 @@ The **preprocess_contours** step has several parameters, including **num_workers
 Second step is the **get_embedding**, a method to processes the standardized shapes, extract the final embeddings and (optionally) calculate contours shape descriptors. It has several parameters including **get_descriptor**, **desc**, **kernel**, **feature_select**, **thrs**, and **pcs**. <br>
 1. *get_descriptor*     : Whether to compute shape descriptors alongside embedding. Default is True. <br>
 2. *desc*               : A list of specific descriptors to compute. Options are 'area', 'aspect_ratio', 'circularity', 'eccentricity', 'extent', 'perimeter', 'roundness', 'solidity'. If None, it will compute ['aspect_ratio', 'circularity', 'eccentricity', 'extent', 'roundness', 'solidity', 'area']. Default is None. <br>
-3. *kernel*             : kernel used for spectral modulation to control smoothing and detail sensitivity. Options are [1='heavy smoothing',2='moderate smoothing',3='low smoothing',4='no smoothing']. Default is *1* (Recommend not changing the default value). <br>
+3. *kernel*             : kernel used for spectral modulation to control smoothing and detail sensitivity. Options are [1='heavy smoothing',2='moderate smoothing',3='low smoothing',4='no smoothing']. Default is *1* (recommended to keep the default value).. <br>
 4. *feature_select*     : Select the most relevant features {variance/mean}. Default is *variance*. <br>
 5. *thrs*               : Numerical threshold utilized by *feature_select* method. If None, it defaults to *0.01* when using *variance*, and *0.05* when using *mean*. Defaults is *None*. <br>
 6. *pcs*                : Number of principal components to retain. If None, the algorithm determines the optimal number based on variance. Defaults is *None*. <br>

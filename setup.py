@@ -21,6 +21,7 @@ setup(
         "tqdm",
         "joblib",
         "pandas",
+        "umap-learn"
     ],
     python_requires=">=3.7",
 )

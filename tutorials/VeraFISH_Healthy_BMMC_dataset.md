@@ -1,21 +1,22 @@
 # VeraFISH Healthy BMMC dataset 
-Finally, we applied shape embedding to our in-house spatial transcriptomics dataset, generated using the VeraFISH platform (492 genes).<br>
-Specifically, we focused on the nuclear morphology of the myeloid population derived from healthy Human Bone Marrow Mononuclear Cells (BMMCs).<br>
+Finally, we applied shape embedding to our in-house spatial transcriptomics dataset, generated using the VeraFISH platform (492 genes).<br> For this tutorial, we will focus on the nuclear morphology of the myeloid population derived from healthy Human Bone Marrow Mononuclear Cells (BMMCs).<br>
 
-In this tutorial, we provide the contour file  `Healthy_BMMC_monocytes_contours.pkl.gz` along with the expression and metadata file `Healthy_BMMC_monocytes_metadata.csv.gz`. 
-These datasets have already undergone several preprocessing steps, including quality control, batch correction, clustering, and cell-type annotation (as described in detail in our paper).
+These clean data, which has already undergone quality control, batch correction, clustering, and cell-type annotation (as described in detail in our paper), is provided in the `datasets` module.
 
 ## Load Contour and Metadata
 ```python
-import pickle
-import gzip
+import numpy as np
+import pandas as pd
+import anndata as ad
+import scanpy
+from mo2gp import datasets
 
-# Load the contour 
-with gzip.open("User_Path\Healthy_BMMC_monocytes_contours.pkl.gz", "rb") as f:
-    contours_input = pickle.load(f)
+# Load the VeraFISH BMMC data from the package
+bmmc_data = datasets.load_bmmc()
 
-# Load metadata file
-df_BMMC_mono = pd.read_csv("User_Path\Healthy_BMMC_monocytes_metadata.csv.gz", index_col=0)
+# Extract the preprocessed contours and metadata
+contours_input = bmmc_data["contour"]
+df_BMMC_mono = bmmc_data["metadata"]
 
 ## Create Anndata
 metadata_cols = ["dataset", "batch", "area", "x", "y","cell_id","ncount","nodg","celltype"]
@@ -32,15 +33,18 @@ for col in metadata_cols:
 
 adata.layers["counts"] = adata.X.copy()
 scale_factor = 50
-sc.pp.normalize_total(adata, target_sum=scale_factor)
-sc.pp.log1p(adata)
+scanpy.pp.normalize_total(adata, target_sum=scale_factor)
+scanpy.pp.log1p(adata)
 adata.layers["data"] = adata.X.copy()
-sc.pp.scale(adata)
-sc.tl.pca(adata, n_comps=30)
-sc.pp.neighbors(adata, n_neighbors=30, n_pcs=10)
+scanpy.pp.scale(adata)
+scanpy.tl.pca(adata, n_comps=30)
+scanpy.pp.neighbors(adata, n_neighbors=30, n_pcs=10)
 ```
+
 ## Run MO2GP analysis
 ```python
+from mo2gp import ShapeAlign
+
 model_align = ShapeAlign(contours = contours_input)
 model_align.preprocess_contours(num_workers=1, n_interp=250, n_smooth=0, scale='perimeter') 
 model_align.get_embedding(num_workers=1) 
@@ -49,6 +53,7 @@ shape_embedding = model_align.shape_embedding
 contours = model_align.contours
 descriptor = model_align.descriptor
 ```
+
 ## Create sdata to store shape embedding, PCA , Clustering, shape DPT 
 ```python
 sdata = ad.AnnData(shape_embedding, dtype=shape_embedding.dtype)
@@ -70,44 +75,67 @@ sdata.uns['iroot'] = np.argmin(np.std(np.linalg.norm(contours, axis=2), axis=1))
 scanpy.tl.diffmap(sdata, n_comps=15)
 scanpy.tl.dpt(sdata, n_dcs=15)
 ```
+
 ## Visualize the aspect ratio and shape-DPT Pseudotime
 ```python
-umap = sdata.obsm['X_umap']
+import numpy as np
+import matplotlib.pyplot as plt
 
+umap = sdata.obsm['X_umap']
 plt.rcParams.update({'font.size': 25})
 
 fig, ax = plt.subplots(ncols=2, nrows=1, figsize=(32, 9))
-pl1 = ax[0].scatter(umap[:,0], umap[:,1], c=sdata.obs['dpt_pseudotime'], s=1, cmap='gist_rainbow_r', vmax=np.quantile(sdata.obs['dpt_pseudotime'], q=0.99))
-plt.colorbar(pl1, ax=ax[0])
-ax[0].scatter(umap[sdata.uns['iroot'],0], umap[sdata.uns['iroot'],1], c='k', s=10)
+
+vmax_dpt = np.nanquantile(sdata.obs['dpt_pseudotime'], q=0.99)
+# --- Plot 1: DPT ---
+pl1 = ax[0].scatter(
+    umap[:,0], umap[:,1], 
+    c=sdata.obs['dpt_pseudotime'], 
+    s=1, 
+    cmap='gist_rainbow_r', 
+    vmax=vmax_dpt
+)
+fig.colorbar(pl1, ax=ax[0])
+
+ax[0].scatter(umap[sdata.uns['iroot'], 0], umap[sdata.uns['iroot'], 1], c='k', s=10, zorder=5)
 ax[0].set_title('Diffusion Pseudotime (DPT)')
 ax[0].invert_yaxis()
 ax[0].invert_xaxis()
 ax[0].set_xlabel('UMAP_1')
 ax[0].set_ylabel('UMAP_2')
 
-pl1 = ax[1].scatter(umap[:,0], umap[:,1], c=sdata.obs['aspect_ratio'], s=1, cmap='gist_rainbow_r', vmax=np.quantile(sdata.obs['aspect_ratio'], q=0.99))
-plt.colorbar(pl1, ax=ax[1])
-ax[1].scatter(umap[sdata.uns['iroot'],0], umap[sdata.uns['iroot'],1], c='k', s=10)
+# --- Plot 2: Aspect Ratio ---
+vmax_aspect = np.nanquantile(sdata.obs['aspect_ratio'], q=0.99)
+pl2 = ax[1].scatter( 
+    umap[:,0], umap[:,1], 
+    c=sdata.obs['aspect_ratio'], 
+    s=1, 
+    cmap='gist_rainbow_r', 
+    vmax=vmax_aspect
+)
+fig.colorbar(pl2, ax=ax[1])
+
+# Plot the root cells
+ax[1].scatter(umap[sdata.uns['iroot'], 0], umap[sdata.uns['iroot'], 1], c='k', s=10, zorder=5)
 ax[1].set_title('aspect_ratio')
 ax[1].invert_yaxis()
 ax[1].invert_xaxis()
 ax[1].set_xlabel('UMAP_1')
 ax[1].set_ylabel('UMAP_2')
 
-plt.tight_layout()
+fig.tight_layout()
 plt.show()
 ```
 ![Healthy_BMMC_UMAP](../tutorials/VeraFISH_Healthy_BMMC_results/UMAP_BMMC_monocytes_DPT_aspect_ratio.png)
 
-To quantify morpholgical trajectory, we computed shape-based Diffusion Pseudotime (sDPT)for each cells (graph-based distance from the round nucleus) and then followed by normalization step.
-As shown in the UMAP, the round nucleus was assigned to a sDPT=0 (aspect ratio ~ 1) and the most irregular nucleus was assigned to sDPT=1. 
+To quantify morpholgical trajectory, we computed shape-based Diffusion Pseudotime (sDPT) for each cells (graph-based distance from the round nucleus) and then followed by normalization step. As shown in the UMAP, the most-round nucleus was assigned to a sDPT=0 (aspect ratio ~ 1) and the most irregular nucleus was assigned to sDPT=1. 
 
 
 ## Visualize the contour representative 
 ```python
 from sklearn.cluster import KMeans
-import numpy as np
+import matplotlib.colors as mcolors
+import matplotlib.cm as cm
 
 plt.rcParams.update({'font.size': 30})
 
@@ -126,11 +154,11 @@ for i in range(n_samples):
     dists = np.linalg.norm(umap[cluster_points] - centroids[i], axis=1)
     selected_indices.append(cluster_points[np.argmin(dists)])
 
-AR = sdata.obs['aspect_ratio'].values  # Ensure it's a NumPy array
+AR = sdata.obs['aspect_ratio'].values
 
 # Normalize AR for colormap
 norm = mcolors.Normalize(vmin=np.min(AR), vmax=np.quantile(AR, q=0.99))
-cmap = cm.brg  # or choose another colormap, e.g., cm.plasma, cm.inferno, etc.
+cmap = cm.brg 
 
 # Plotting
 scale = 1.2
@@ -147,7 +175,7 @@ for i in selected_indices:
     contour_shifted = contour_scaled + np.array([x_offset, y_offset])
     ax.plot(contour_shifted[:, 0], contour_shifted[:, 1], color=color, linewidth=1.5)
 
-# Optional: add colorbar
+# Add colorbar
 sm = cm.ScalarMappable(cmap=cmap, norm=norm)
 sm.set_array([])
 cbar = plt.colorbar(sm, ax=ax)
@@ -168,9 +196,8 @@ plt.show()
 ![Healthy_BMMC_UMAP_contour](../tutorials/VeraFISH_Healthy_BMMC_results/UMAP_BMMC_monocytes_contour.png)
 The UMAP reveals a trajectory or continuum of Healthy BMMC monocytes nuclear shapes ranging from round to elongated. Nuclear cells with a low aspect ratio (more round) are enriched on the left side of the UMAP, while cells with a high aspect ratio are enriched on the right side, more elongated shapes. 
 
-## Custom function to calculate the Enrichment (Ratio of Fold)
-To quantify the association between nuclear shape and cell state, we computed a local enrichment metric in the shape embedding space using a custom function below. 
-Within each neighborhood, we calculated an enrichment score for a target/interest population  relative to a reference population (Classical Monocytes).
+## Cell type enrichment analysis
+To quantify the association between nuclear shape and cell state, we computed a local enrichment metric in the shape embedding space using a custom function below. Within each neighborhood, we calculated an enrichment score for a target/interest population relative to a reference population (Classical Monocytes).
 
 ```python
 from collections import Counter
