@@ -68,25 +68,33 @@ class ShapeAlign:
     # Functions of contours --------------------------------------------------------------------------------
     
     @staticmethod
-    def contour_simple_descriptors(contours, desc=['aspect_ratio', 'circularity', 'eccentricity',
-                                                   'extent', 'roundness', 'solidity', 'area',]):
+    def contour_simple_descriptors(contours, desc=None):
         """
         Computes shape descriptors for each contour in the input list.
 
         Parameters:
         -----------
-        contours : list
-            List of contours represented as numpy arrays of (x, y) coordinates.
-        desc : list
-            List of descriptor names to compute. Options include:
-            - 'area', 'aspect_ratio', 'circularity', 'eccentricity',
-              'extent', 'perimeter', 'roundness', 'solidity'
+        contours : list of numpy.ndarray
+            A list of contours, where each contour is represented as a 2D numpy array 
+            of (x, y) coordinates.
+        desc : list of str, optional
+            A list of specific descriptor names to compute. Options include:
+            'area', 'aspect_ratio', 'circularity', 'eccentricity', 'extent', 
+            'perimeter', 'roundness', 'solidity'. If None, a default set of 
+            descriptors is computed.
 
         Returns:
         -----------
         numpy.ndarray
-            2D array where each row represents the shape descriptors for a contour.
+            2D array of shape (n_contours, n_descriptors) where each row 
+            represents the shape descriptors for a contour.
         """
+        if desc is None:
+            desc = [
+                'aspect_ratio', 'circularity', 'eccentricity', 
+                'extent', 'roundness', 'solidity', 'area'
+            ]
+
         descriptor_functions = {
             "area": area,
             "aspect_ratio": aspect_ratio,
@@ -148,33 +156,36 @@ class ShapeAlign:
     def get_embedding(
         self, 
         get_descriptor=True,
+        desc=None,
         kernel=1,
         feature_select='variance',
         thrs=None,
         pcs=None,
-        **args
     ):
         """
         Computes shape embeddings using Fourier Transform and PCA.
 
         Parameters:
         -----------
-        get_descriptor : bool
-            Whether to compute shape descriptors. Default is True.
-        kernel : int
-            Default is 1.
-        feature_select : {'variance', 'mean'}
-            Select the most relevant features of scaled_mft. 
-            'variance' : Selects coefficients with variance above a threshold.
-            'mean'     : Selects coefficients with a mean value above a threshold.
-            Default is 'variance'.          
-        thrs : float 
-            Threshold for the 'feature_select'. 
-            Default is None (0.01 for 'variance' and 0.05 or 'mean).
-        pcs : int
-            Number of principal components to retain. Default is None.
-        **args : dict
-            Additional keyword arguments (e.g., specific descriptors).
+        get_descriptor : bool, default=True
+            Whether to compute standard shape descriptors alongside the embeddings.
+        desc : list of str, optional
+            A list of specific descriptor names to compute if `get_descriptor` is True. 
+            Options include: 'area', 'aspect_ratio', 'circularity', 'eccentricity', 
+            'extent', 'perimeter', 'roundness', 'solidity'. If None, a default set 
+            of descriptors is computed.
+        kernel : {1,2,3,4}, default=1
+            The kernel used for spectral modulation. 
+        feature_select : {'variance', 'mean'}, default='variance'
+            Method to select the most relevant features from the scaled Fourier transform.
+            - 'variance' : Retains coefficients with a variance above `thrs`.
+            - 'mean'     : Retains coefficients with a mean value above `thrs`.
+        thrs : float, optional
+            The numerical threshold utilized by the `feature_select` method. 
+            If None, it defaults to 0.01 when using 'variance', and 0.05 when using 'mean'.
+        pcs : int, optional
+            The maximum number of principal components to retain during PCA. 
+            If None, the algorithm determines the optimal number based on variance.
         """
         
         if self.contours is None:
@@ -242,7 +253,10 @@ class ShapeAlign:
         ## Compute Cells descriptors
         descriptors = None
         if get_descriptor:
-            descriptors = self.contour_simple_descriptors(contours, **args)
+            if desc is not None:
+                descriptors = self.contour_simple_descriptors(contours, desc=desc)
+            else:
+                descriptors = self.contour_simple_descriptors(contours)
 
         self.dft = dft
         self.scaled_mft = scaled_mft

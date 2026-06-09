@@ -1,122 +1,25 @@
 # 2.Swedish Leaf Dataset
-We also applied the MO2GP shape embedding pipeline to the Swedish Leaf Dataset, which consists of 15 distinct leaf species with 75 examples each, totaling 1,125 images. <br>
+We also applied MO2GP to the Swedish Leaf Dataset, which consists of 15 distinct leaf species with 75 examples each, totaling 1,125 images. <br>
 
 Reference:<br>
 Söderkvist, O. J. O. (2001). Computer vision classification of leaves from Swedish trees (Master's Thesis). Linköping University.
 
 ## Images Preprocessing <br>
-MO2GP utilizes the largest continuous contour from each object as the primary input. Therefore, preprocessing workflow is needed.<br>
-First, we need to extracts the largest external contour and generates a corresponding binary mask for each sample. These contours, along with their associated labels and processed images, are then stored for downstream shape embedding and analysis (available in `data` folder).<br>
+Since, MO2GP utilizes continuous contour from each object as the primary input, we need to preprocess workflow the original leaf images. Here, we extracted the largest external contour and generates a corresponding binary mask for each sample using opencv pipeline. <br>
 
-```python
-from PIL import Image
-from tqdm import tqdm
-import numpy as np
-import cv2
-import pickle
+These contours, along with their associated labels and processed images, have been pre-packaged for downstream shape embedding and are automatically available through the MO2GP `datasets` module. <br>
 
-# Custom function to get the image and contour 
-def get_image_and_contours(img_path, size=128, threshold=128, invert_background=False):
-    try:
-        # Open image and convert to grayscale
-        img = Image.open(img_path).convert("L")  # "L" for grayscale
-    except IOError:
-        raise FileNotFoundError(f"Cannot load {img_path}")
-    
-    # Convert to OpenCV format (numpy array)
-    img = np.array(img)
-
-    # Normalize the image to the range [0, 255] if it's not already in uint8 format
-    if img.dtype != np.uint8:
-        img = cv2.normalize(img, None, 0, 255, cv2.NORM_MINMAX).astype(np.uint8)
-
-    # Invert the background if it is bright (background needs to be 0)
-    if invert_background:
-        img = 255 - img
-
-    # Apply binary thresholding to segment the leaf
-    _, binary = cv2.threshold(img, threshold, 255, cv2.THRESH_BINARY)
-
-    # Get original dimensions
-    h, w = binary.shape
-    # Determine the scaling factor based on the largest dimension
-    scale = size / max(h, w)
-    new_w, new_h = int(w * scale), int(h * scale)
-    # Resize while maintaining aspect ratio
-    img_resized = cv2.resize(binary, (new_w, new_h), interpolation=cv2.INTER_CUBIC)
-
-    # Create a 128x128 black image for padding
-    img_padded = np.zeros((size, size), dtype=np.uint8)
-    # Calculate padding
-    top = (size - new_h) // 2
-    bottom = size - new_h - top
-    left = (size - new_w) // 2
-    right = size - new_w - left
-    # Apply padding to the resized image
-    img_padded[top:top + new_h, left:left + new_w] = img_resized
-
-    # Find the largest continuous contour (external shape)
-    contours, _ = cv2.findContours(binary, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_NONE)
-    largest_contour = None
-    if contours:
-        # Select the largest contour
-        largest_contour = max(contours, key=cv2.contourArea)
-        largest_contour = largest_contour.reshape(-1, 2)
-    
-    return img_padded, largest_contour
-
-# Initialize data containers
-contour_input = []
-labels = []
-img_input = []
-
-# Define directory
-path = "User_Path\\Leaf_Dataset"
-
-# Get a list of all items in the directory
-folders = sorted ([f for f in os.listdir(path) if not f.startswith('.')])
-
-# Initialize counter variable
-ino = 0
-
-for cur_folder in tqdm(folders, position=0, leave=True):
-    files = [f for f in os.listdir(os.path.join(path, cur_folder)) if not f.startswith('.')]
-
-    labels.extend([cur_folder] * len(files))
-
-    # Loop through each individual file within the current folder
-    for file in files:
-        img_path = os.path.join(path, cur_folder, file)
-        cur_img, cur_cont = get_image_and_contours(
-            img_path, 
-            size=128, 
-            threshold=64, 
-            invert_background=False)
-        img_input.append(cur_img)
-        contour_input.append(cur_cont)
-
-#Finalize and Save Data
-img_input = np.array(img_input)
-
-# Open a file in "write binary"  mode to save contour data
-with open("User_Path\\contour_leaf.pkl", "wb") as f:
-    pickle.dump(contour_input, f)
-
-# Open a new file to save the label data
-with open("User_Path\\label_leaf.pkl", "wb") as f:
-    pickle.dump(labels, f)
-
-# Save the img_input NumPy array to a file using NumPy's efficient .npy format
-np.save(file="User_Path\\\image_leaf.npy", arr=img_input)
-```
 ## Load the pre-processed file and visualize the image and contour file.<br>
 ```python
-#Load Data
-with open ("User_Path\\contour_leaf.pkl", "rb") as f:
-     contour_input = pickle.load(f)
-with open("User_Path\\label_leaf.pkl", "rb") as f:
-     labels = pickle.load(f)
-labels = np.array(labels)
+import numpy as np
+import matplotlib.pyplot as plt
+from mo2gp import datasets
+
+# 1. Load the Swedish Leaf data
+leaf_data = datasets.load_leaf()
+contour_input = leaf_data["contour"]
+img_input = leaf_data["images"]
+labels = leaf_data["labels"]
 
 # Visualize the processed images
 idx = np.arange(5, labels.shape[0], 75)
@@ -129,7 +32,6 @@ for i in range(len(idx)):
 plt.show()
 
 # Visualize the contour
-idx = np.arange(4, labels.shape[0], 75)
 fig, ax = plt.subplots(ncols=5, nrows=3, figsize=(25, 15))
 ax = ax.flatten()
 for i in range(len(idx)):
@@ -143,25 +45,46 @@ plt.show()
 ![Leaf_Contour](../tutorials/Swedish_Leaf_data_results/leaf_contour.png)
 
 ## Run MO2GP shape embedding 
-```python
-#MO2GP
-model_align = ShapeAlign(contours=contour_input)
-model_align.preprocess_contours(num_workers=1, n_interp=250, n_smooth=0, scale='perimeter')
-model_align.get_embedding(num_workers=1)
+Now we process the leaf contours through the MO2GP pipeline and evaluate the resulting embeddings.
 
+```python
+import numpy as np
+from sklearn.metrics import silhouette_samples
+from mo2gp import ShapeAlign
+
+# 1. Define the custom group-averaged silhouette score
+def silhouette_score(dataIn, labels, metric='euclidean'):    
+    output_sample = silhouette_samples(dataIn, labels, metric=metric)
+    unique_labels = np.unique(labels)
+    group_means = np.array([output_sample[labels == label].mean(axis=0) for label in unique_labels])
+    return np.mean(group_means)
+
+# 2. Initialize and run MO2GP
+model_align = ShapeAlign(contours=contour_input)
+model_align.preprocess_contours(num_workers=1)
+model_align.get_embedding()
+
+# 3. Extract the results
 shape_embedding = model_align.shape_embedding
 contours = model_align.contours
 descriptor = model_align.descriptor
 
+# 4. Evaluate embedding quality
 ss = silhouette_score(shape_embedding, labels, metric='euclidean')
-print(f'Silhouette score = {ss:.4f} ', shape_embedding.shape)
+print(f"Silhouette Score = {ss:.4f}, Embedding Shape: {shape_embedding.shape}")
 ```
-# Generate UMAP for MO2GP visualization
+
+## Generate UMAP for MO2GP visualization
+
+To evaluate how well MO2GP separates the different leaf species, we project the high-dimensional shape embeddings down to 2D using UMAP.
 ```python
-# Define a list of 15 distinct colors 
+import umap
+import matplotlib.pyplot as plt
+
+# Define a list of 15 distinct RGB colors 
 color_list = [
     (0.788, 0.498, 0.498), # brown
-    (0, 0, 0),             # black
+    (0.0, 0.0, 0.0),       # black
     (1.0, 0.647, 0.823),   # hotpink
     (0.701, 0.4, 0.701),   # purple
     (0.4, 0.4, 1.0),       # blue
@@ -177,7 +100,7 @@ color_list = [
     (1.0, 0.6, 0.0)        # dark orange
 ]
 
-# Define list of 15 leaf class names
+# Define the list of 15 leaf class names
 shapes = [
     '01.Ulmus_carpinifolia', '02.Acer', '03.Salix_aurita',
     '04.Quercus', '05.Alnus_incana', '06.Betula_pubescens',
@@ -186,97 +109,138 @@ shapes = [
     '13.Tilia', '14.Sorbus intermedia', '15.Fagus silvatica'
 ]
 
-# Use zip and dict for create a dictionary that maps each shape name to a color
+# Create a dictionary mapping each species name to a specific color
 shape_color_dict = dict(zip(shapes, color_list))
-shape_color_dict
 
-#Run UMAP 
-fit = umap.UMAP(random_state=19)
+# Run UMAP dimensionality reduction
+fit = umap.UMAP(random_state=18)
 embedding = fit.fit_transform(shape_embedding)
 
-#Plot the UMAP 
+# Plot the UMAP results
+fig, ax = plt.subplots(figsize=(12, 9))
 for shape in np.unique(labels):
-    plt.scatter(
+    ax.scatter(
         embedding[labels == shape, 0],
         embedding[labels == shape, 1],
         s=5,
-        c=shape_color_dict[shape],
+        c=[shape_color_dict[shape]],  # Wrapped in brackets to prevent RGB dimension errors
         label=shape
-)
+    )
 
-plt.axis('equal')
-plt.xlabel('UMAP1')
-plt.ylabel('UMAP2')
-plt.title(f'Swedish Leaf Dataset, SI={ss:.4f}')
-plt.legend(title='', loc='center left', bbox_to_anchor=(1, 0.5), fontsize=8)
+ax.axis('equal')
+ax.set_xlabel('UMAP1', fontsize=12)
+ax.set_ylabel('UMAP2', fontsize=12)
+ax.set_title(f'Swedish Leaf Dataset, SI={ss:.4f}', fontsize=24)
+
+# Position the legend outside the plot
+ax.legend(title='Leaf Species', loc='center left', bbox_to_anchor=(1, 0.5), fontsize=12)
+
+fig.tight_layout()
 plt.show()
 ```
 ![Leaf_UMAP](../tutorials/Swedish_Leaf_data_results/Leafdata_UMAP.png)
 
 User also can visualize the shape represented by each cluster using the code below :
 ``` python
-from matplotlib.patches import Polygon
+import umap
+import numpy as np
 import matplotlib.pyplot as plt
+from matplotlib.patches import Polygon
 from matplotlib.lines import Line2D
 
-# Map shape name → index
-shape_to_idx = {shape: i for i, shape in enumerate(shapes)}
-species_labels = np.array([shape_to_idx[l] for l in labels])
+# Define a list of 15 distinct RGB colors 
+color_list = [
+    (0.788, 0.498, 0.498), # brown
+    (0.0, 0.0, 0.0),       # black
+    (1.0, 0.647, 0.823),   # hotpink
+    (0.701, 0.4, 0.701),   # purple
+    (0.4, 0.4, 1.0),       # blue
+    (0.4, 0.701, 0.4),     # green
+    (0.456, 0.632, 0.779), # steel blue
+    (1.0, 0.788, 0.4),     # orange
+    (1.0, 0.4, 0.4),       # red
+    (0.6, 0.4, 0.2),       # dark brown
+    (0.5, 0.5, 0.5),       # gray
+    (0.8, 0.8, 0.0),       # yellow
+    (0.5, 0.0, 0.5),       # dark purple
+    (0.0, 0.6, 0.6),       # teal
+    (1.0, 0.6, 0.0)        # dark orange
+]
 
-fit = umap.UMAP(
-    n_neighbors=50,
-    min_dist=0.2,
-    random_state=18
-)
+# Define the list of 15 leaf class names (matching data labels exactly)
+shapes = [
+    '01.Ulmus_carpinifolia', '02.Acer', '03.Salix_aurita',
+    '04.Quercus', '05.Alnus_incana', '06.Betula_pubescens',
+    '07.Salix_alba_Sericea', '08.Populus_tremula', '09.Ulmus_glabra',
+    '10.Sorbus_aucuparia', '11.Salix_sinerea', '12.Populus',
+    '13.Tilia', '14.Sorbus intermedia', '15.Fagus silvatica'
+]
+
+# Create a dictionary mapping each species name to a specific color
+shape_color_dict = dict(zip(shapes, color_list))
+
+# Run UMAP dimensionality reduction
+fit = umap.UMAP(n_neighbors=50, min_dist=0.2, random_state=18)
 embedding = fit.fit_transform(shape_embedding)
 
+# Find the representative index (closest to the centroid) for each species
 representative_indices = []
-for species_idx in range(15):
-    idxs = np.where(species_labels == species_idx)[0]
-    center = embedding[idxs].mean(axis=0)
-    dists = np.linalg.norm(embedding[idxs] - center, axis=1)
-    representative_indices.append(idxs[np.argmin(dists)])
+for shape in shapes:
+    idxs = np.where(labels == shape)[0]
+    if len(idxs) > 0:
+        center = embedding[idxs].mean(axis=0)
+        dists = np.linalg.norm(embedding[idxs] - center, axis=1)
+        representative_indices.append(idxs[np.argmin(dists)])
 
+# Plot the representative contours
 scale = 3
-fig, ax = plt.subplots(figsize=(17, 10))
+fig, ax = plt.subplots(figsize=(12, 9))
+
 for idx in representative_indices:
-    contour = contours[idx]
+    shape_name = labels[idx]
+    contour = contours[idx].copy()
     contour = contour - contour.mean(axis=0)
-    # rotate 180° (flip vertically and horizontally)
-    theta = np.pi  # 180 degrees
+    
+    # Rotate 180° (flip vertically and horizontally)
+    theta = np.pi 
     R = np.array([[np.cos(theta), -np.sin(theta)],
                   [np.sin(theta),  np.cos(theta)]])
     contour = contour @ R.T
-    # normalize contour size 
-    contour = contour / np.max(np.linalg.norm(contour, axis=1)) # to make all the representative contour same size 
-    # scale
+    
+    # Normalize contour size and scale it
+    contour = contour / np.max(np.linalg.norm(contour, axis=1)) 
     contour = contour * scale
-    # shift to UMAP position
+    
+    # Shift the contour to its actual UMAP coordinate position
     contour = contour + embedding[idx]
 
-    # add polygon
+    # Add the polygon to the plot
     ax.add_patch(
         Polygon(
             contour,
             closed=True,
             fill=False,
-            edgecolor=color_list[species_labels[idx]],
+            edgecolor=shape_color_dict[shape_name],
             linewidth=2.5
         )
     )
 
+# Create custom legend elements
 legend_elements = [
-    Line2D([0], [0], color=color_list[i], lw=3, label=shapes[i])
-    for i in range(15)
+    Line2D([0], [0], color=shape_color_dict[shape], lw=3, label=shape)
+    for shape in shapes
 ]
 
-ax.set_xlabel("UMAP1")
-ax.set_ylabel("UMAP2")
-plt.title(f'Swedish Leaf Dataset Contours, SI={ss:.4f}')
-ax.axis("equal")
-ax.set_aspect("equal", adjustable="box")
-ax.legend(handles=legend_elements,loc='center left',bbox_to_anchor=(1.02, 0.5), fontsize=10)
-plt.tight_layout()
+# Formatting the plot
+ax.axis('equal')
+ax.set_xlabel('UMAP1', fontsize=12)
+ax.set_ylabel('UMAP2', fontsize=12)
+ax.set_title(f'Swedish Leaf Dataset Contours, SI={ss:.4f}', fontsize=24)
+
+# Position the legend outside the plot
+ax.legend(handles=legend_elements, title='Leaf Species', loc='center left', bbox_to_anchor=(1, 0.5), fontsize=12)
+
+fig.tight_layout()
 plt.show()
 ```
 ![Leaf_UMAP_contour](../tutorials/Swedish_Leaf_data_results/Leafdata_UMAP_contour_clean.png)
