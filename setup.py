@@ -1,9 +1,9 @@
 from setuptools import setup, find_packages
 
 setup(
-    name="shapealign",
+    name="mo2gp",
     version="0.1.0",
-    description="A package for preprocessing and embedding shape contours using FFT and PCA",
+    description="Morphology O(2)-invariant General-purpose Projection (MO2GP), a highly discriminative, efficient and interpretable algorithm guaranteeing rotation- and reflection-invariant shape representation. MO2GP uses Fourier descriptors of complex-plane representations of contour position and regularity, with dimensionality reduction for noise reduction and scalability.",
     author="Lab of Systems Biology and Data Analytics, GIS, A*STAR, Singapore",
     author_email="Ignasius_Joanito_Irwan@a-star.edu.sg",
     packages=find_packages(),
