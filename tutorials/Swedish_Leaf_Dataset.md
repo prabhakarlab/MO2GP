@@ -43,6 +43,8 @@ plt.show()
 ```
 ![Leaf_Image](../tutorials/Swedish_Leaf_data_results/leaf_image.png)
 ![Leaf_Contour](../tutorials/Swedish_Leaf_data_results/leaf_contour.png)
+**Note:** In the source data, **11.Salix_sineria** is identical to **11.Salix_cineacea** in the manuscript. The original dataset contains a typo.
+
 
 ## Run MO2GP shape embedding 
 Now we process the leaf contours through the MO2GP pipeline and evaluate the resulting embeddings.

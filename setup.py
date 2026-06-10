@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 setup(
     name="mo2gp",
-    version="0.1.0",
+    version="0.1.1",
     description="Morphology O(2)-invariant General-purpose Projection (MO2GP) algorithm.",
     author="Lab of Systems Biology and Data Analytics, GIS, A*STAR, Singapore",
     author_email="Ignasius_Joanito_Irwan@a-star.edu.sg",

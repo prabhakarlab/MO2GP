@@ -59,6 +59,7 @@ labels = simulation_data["labels"]
 ```
 #### Contour of 24 simulated shapes
 ![Simulated_data_Contour](./tutorials/Simulation_data_results/Simulation_MO2GP_contour.png)
+**Note:**  **boomerang** equal to **kidney bean** in the manuscript
 
 ### Run MO2GP analysis 
 This step is where the MO2GP takes place. MO2GP Shape embedding uses the **ShapeAlign** class, which preprocess the raw shape outlines (contours) and performs advanced shape analysis using Fourier transforms and dimensionality reduction.<br>
