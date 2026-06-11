@@ -180,3 +180,9 @@ More detailed tutorials on additional datasets are available here:
 
 [Swedish Leaf Dataset](./tutorials/Swedish_Leaf_Dataset.md) | [MPEG7 Dataset](./tutorials/MPEG7_Dataset.md) |
 [VeraFISH_Healthy_BMMC_Dataset](./tutorials/VeraFISH_Healthy_BMMC_dataset.md) 
+
+
+## ⚖️ Copyright & License
+The codes here have been prepared by Jagadish Sankaran, Ignasius Joanito, Joseph Lee, and Shyam Prabhakar, Genome Institute of Singapore (GIS), Agency for Science, Technology and Research (A*STAR).
+
+© 2022 - 2026 Agency for Science, Technology and Research (A*STAR).
