@@ -12,7 +12,7 @@ import scanpy
 from mo2gp import datasets
 
 # Load the VeraFISH BMMC data from the package
-bmmc_data = datasets.load_bmmc()
+bmmc_data = datasets.load_healthy_bmmc()
 
 # Extract the preprocessed contours and metadata
 contours_input = bmmc_data["contour"]
@@ -47,7 +47,7 @@ from mo2gp import ShapeAlign
 
 model_align = ShapeAlign(contours = contours_input)
 model_align.preprocess_contours(num_workers=1, n_interp=250, n_smooth=0, scale='perimeter') 
-model_align.get_embedding(num_workers=1) 
+model_align.get_embedding() 
 
 shape_embedding = model_align.shape_embedding
 contours = model_align.contours
@@ -332,13 +332,16 @@ def calculate_and_plot_enrichment_RatioOfFolds(
 ## Local Enrichment using 1000 neighbors
 For each cell, a local neigborhood was determine using k-nearest neighbors(k=1000) 
 ```python
+
+sdata.obs['celltype'] = adata.obs['celltype'].values
+sdata.obs['dataset'] =  adata.obs['dataset'].values
+
 dims = sdata.obsm['X_pca'].shape[1]
 scanpy.pp.neighbors(
     sdata,
     n_neighbors=1000,
     use_rep='X_pca',
     n_pcs=dims,
-    transformer=exact_parallel_transformer, # Pass the object, not a string
     key_added='nn_enrichment'
 )
 ```
