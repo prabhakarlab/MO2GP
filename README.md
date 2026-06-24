@@ -111,6 +111,9 @@ print(f"Silhouette Score: {ss}, Embedding Shape: {shape_embedding.shape}")
 ### Visualize the UMAP
 ```python
 
+import matplotlib.pyplot as plt
+import umap
+
 color_list = [
 (0, 0, 0), # black
 (0.788, 0.498, 0.498), # brown
